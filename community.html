@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -36,7 +36,7 @@
       align-items: center;
     }
 
-    .btn-back {
+    .btn-back, .btn-admin {
       background-color: #1e1e1e;
       color: #ffffff;
       border: 1px solid #444444;
@@ -48,8 +48,13 @@
       display: inline-block;
     }
 
-    .btn-back:hover {
+    .btn-back:hover, .btn-admin:hover {
       background-color: #2e2e2e;
+    }
+
+    .btn-admin {
+      border-color: #ffaa00;
+      color: #ffaa00;
     }
 
     .user-status {
@@ -66,14 +71,14 @@
       gap: 20px;
     }
 
-    /* BOX CREAZIONE POST */
-    .post-creator-box {
+    /* BOX CREAZIONE POST / PANNELLO ADMIN */
+    .post-creator-box, .admin-panel {
       background-color: rgba(30, 30, 30, 0.95);
       border: 1px solid #333333;
       padding: 24px;
     }
 
-    .post-creator-box h2 {
+    .post-creator-box h2, .admin-panel h2 {
       font-size: 1.2rem;
       color: #ffffff;
       margin-bottom: 14px;
@@ -99,11 +104,6 @@
       min-height: 80px;
     }
 
-    .form-group input:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: #777777;
-    }
-
     .btn-publish {
       background-color: #3a3a3a;
       color: #ffffff;
@@ -112,7 +112,6 @@
       font-size: 0.9rem;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
     }
 
     .btn-publish:hover {
@@ -179,13 +178,19 @@
     .btn-report {
       color: #ff6b6b;
     }
+
+    .btn-delete {
+      background-color: #5a1a1a;
+      border-color: #ff4444;
+      color: #ff4444;
+    }
   </style>
 
-  <!-- FIREBASE LOGIC -->
+  <!-- FIREBASE & ADMIN LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, add슐, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDuu5Y88zLYuPWqxHs9pis6OfeNDKoG8YE",
@@ -201,43 +206,54 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let currentUser = null;
+    const ADMIN_NICKNAME = "Fronte ★"; // Nome esatto dell'admin
 
     document.addEventListener("DOMContentLoaded", () => {
       const userStatusEl = document.getElementById("user-status");
       const postForm = document.getElementById("post-form");
       const postsFeed = document.getElementById("posts-feed");
+      const adminPanel = document.getElementById("admin-panel");
+      const reportsList = document.getElementById("reports-list");
 
-      // Controlla se l'utente è loggato
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
-          currentUser = user;
-          userStatusEl.textContent = `Logged as: ${user.displayName || "Utente"}`;
+          const nickname = user.displayName || "Utente";
+          userStatusEl.textContent = `Logged as: ${nickname}`;
+
+          // Controlla se l'utente loggato è Fronte ★
+          if (nickname === ADMIN_NICKNAME) {
+            adminPanel.style.display = "block";
+            loadReports();
+          } else {
+            adminPanel.style.display = "none";
+          }
         } else {
-          currentUser = null;
           userStatusEl.innerHTML = `<a href="account.html" style="color: #ff6b6b;">Accedi per postare</a>`;
+          adminPanel.style.display = "none";
         }
       });
 
-      // Gestione invio post
+      // Pubblicazione post
       postForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        if (!currentUser) {
-          alert("Devi effettuare l'accesso per pubblicare un post!");
+        const user = auth.currentUser;
+        if (!user) {
+          alert("Devi effettuare l'accesso!");
           window.location.href = "account.html";
           return;
         }
 
         const title = document.getElementById("post-title-input").value.trim();
         const body = document.getElementById("post-body-input").value.trim();
+        const nickname = user.displayName || "Anonym";
 
         if (!title || !body) return;
 
         try {
           await addDoc(collection(db, "posts"), {
-            title: title,
-            body: body,
-            author: currentUser.displayName || "Anonym",
+            title,
+            body,
+            author: nickname,
             likes: 0,
             createdAt: serverTimestamp()
           });
@@ -246,12 +262,11 @@
           document.getElementById("post-body-input").value = "";
           loadPosts();
         } catch (error) {
-          console.error("Errore pubblicazione post:", error);
-          alert("Errore durante la pubblicazione.");
+          console.error("Errore invio post:", error);
         }
       });
 
-      // Carica i post dal database Firestore
+      // Caricamento dei post
       async function loadPosts() {
         postsFeed.innerHTML = "<p style='color: #888;'>Caricamento post...</p>";
         try {
@@ -260,9 +275,12 @@
           
           postsFeed.innerHTML = "";
           if (querySnapshot.empty) {
-            postsFeed.innerHTML = "<p style='color: #888;'>Nessun post nella community. Sii il primo a scrivere!</p>";
+            postsFeed.innerHTML = "<p style='color: #888;'>Nessun post nella community.</p>";
             return;
           }
+
+          const currentUser = auth.currentUser;
+          const isUserAdmin = currentUser && currentUser.displayName === ADMIN_NICKNAME;
 
           querySnapshot.forEach((documentSnapshot) => {
             const post = documentSnapshot.data();
@@ -279,41 +297,87 @@
               <div class="post-actions">
                 <button class="btn-action like-btn" data-id="${postId}">▲ ${post.likes || 0} Likes</button>
                 <button class="btn-action btn-report report-btn" data-id="${postId}">Report</button>
+                ${isUserAdmin ? `<button class="btn-action btn-delete delete-btn" data-id="${postId}">Elimina (Admin)</button>` : ""}
               </div>
             `;
 
-            // Evento per mettere Like
+            // Tasto Like
             card.querySelector(".like-btn").addEventListener("click", async () => {
+              await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
+              loadPosts();
+            });
+
+            // Tasto Report -> Invia la segnalazione visibile solo a Fronte ★
+            card.querySelector(".report-btn").addEventListener("click", async () => {
               try {
-                const postRef = doc(db, "posts", postId);
-                await updateDoc(postRef, {
-                  likes: increment(1)
+                await addDoc(collection(db, "reports"), {
+                  postId: postId,
+                  postTitle: post.title,
+                  author: post.author,
+                  reportedAt: serverTimestamp()
                 });
-                loadPosts(); // ricarica la lista aggiornata
+                alert("Post segnalato con successo a Fronte ★.");
               } catch (err) {
-                console.error("Errore like:", err);
+                console.error("Errore report:", err);
               }
             });
 
-            // Evento per il Report
-            card.querySelector(".report-btn").addEventListener("click", () => {
-              alert("Post segnalato ai moderatori. Grazie!");
-            });
+            // Tasto Elimina (Solo per Fronte ★)
+            if (isUserAdmin) {
+              card.querySelector(".delete-btn").addEventListener("click", async () => {
+                if (confirm("Vuoi eliminare questo post?")) {
+                  await deleteDoc(doc(db, "posts", postId));
+                  loadPosts();
+                  loadReports();
+                }
+              });
+            }
 
             postsFeed.appendChild(card);
           });
         } catch (err) {
-          console.error("Errore caricamento post:", err);
-          postsFeed.innerHTML = "<p style='color: #ff6b6b;'>Impossibile caricare i post (verifica le regole di sicurezza di Firestore).</p>";
+          console.error("Errore caricamento feed:", err);
         }
       }
 
-      // Funzione di sicurezza base anti-XSS per il testo
-      function escapeHtml(text) {
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      // Carica i report nel pannello privato di Fronte ★
+      async function loadReports() {
+        try {
+          const q = query(collection(db, "reports"), orderBy("reportedAt", "desc"));
+          const querySnapshot = await getDocs(q);
+          reportsList.innerHTML = "";
+
+          if (querySnapshot.empty) {
+            reportsList.innerHTML = "<p style='color: #888; font-size: 0.85rem;'>Nessuna segnalazione ricevuta.</p>";
+            return;
+          }
+
+          querySnapshot.forEach((docSnap) => {
+            const rep = docSnap.data();
+            const div = document.createElement("div");
+            div.style.cssText = "background: #181818; border: 1px solid #444; padding: 10px; margin-bottom: 8px; font-size: 0.85rem;";
+            div.innerHTML = `
+              <strong>Post:</strong> "${escapeHtml(rep.postTitle || 'Senza titolo')}" <br>
+              <strong>Autore:</strong> u/${rep.author} <br>
+              <button class="btn-action btn-delete" style="margin-top: 6px;" onclick="window.deleteReport('${docSnap.id}')">Rimuovi Segnalazione</button>
+            `;
+            reportsList.appendChild(div);
+          });
+        } catch (err) {
+          console.error("Errore caricamento report:", err);
+        }
       }
 
-      // Carica i post all'avvio
+      // Funzione globale per rimuovere il report dal pannello admin
+      window.deleteReport = async function(reportId) {
+        await deleteDoc(doc(db, "reports", reportId));
+        loadReports();
+      };
+
+      function escapeHtml(text) {
+        return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "";
+      }
+
       loadPosts();
     });
   </script>
@@ -326,6 +390,15 @@
   </div>
 
   <div class="main-container">
+
+    <!-- PANNELLO DI CONTROLLO RISERVATO A FRONTE ★ -->
+    <section id="admin-panel" class="admin-panel" style="display: none;">
+      <h2>Pannello di Controllo (Fronte ★)</h2>
+      <p style="font-size: 0.85rem; color: #ffaa00; margin-bottom: 12px;">Sei loggato come Admin. Qui vedi le segnalazioni (Report) dei post:</p>
+      <div id="reports-list">
+        <p style="color: #888; font-size: 0.85rem;">Caricamento segnalazioni...</p>
+      </div>
+    </section>
 
     <!-- BOX CREAZIONE POST -->
     <section class="post-creator-box">
@@ -343,10 +416,10 @@
 
     <!-- FEED DEI POST -->
     <section class="feed-container" id="posts-feed">
-      <!-- I post caricati da Firebase appariranno qui dinamicamente -->
+      <!-- I post caricati da Firebase appariranno qui -->
     </section>
 
   </div>
 
 </body>
-</html>
+</html> 
