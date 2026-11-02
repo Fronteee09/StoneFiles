@@ -3,30 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StoneFiles — The Alpha & Beta Minecraft Hub</title>
-  <meta name="description" content="Discover and share posts, seeds, legacy mods, and memories from Minecraft's Alpha and Beta versions." />
+  <title>StoneFiles — Alpha & Beta Minecraft Hub</title>
+  <meta name="description" content="The community board and archive dedicated to Minecraft's Alpha and Beta eras." />
   
   <style>
-    /* RESET & VARS */
+    /* RESET BASE */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      border-radius: 0px !important; /* Forza lo stile quadrato retro */
+      border-radius: 0px !important; /* Estetica quadrata retro */
     }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #1a1a1b; /* Sfondo scuro stile Reddit */
-      color: #d7dadc;
-      line-height: 1.5;
+      background-color: #121212;
+      color: #e0e0e0;
+      line-height: 1.6;
     }
 
-    /* HEADER */
+    /* BARRA SUPERIORE */
     header {
-      background-color: #272729;
-      border-bottom: 2px solid #343536;
-      padding: 12px 24px;
+      background-color: #1e1e1e;
+      border-bottom: 2px solid #333333;
+      padding: 14px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -35,151 +35,154 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .brand-icon {
-      width: 28px;
-      height: 28px;
-      background-color: #737373; /* Colore blocco pietra */
-      border: 2px solid #4a4a4a;
+    .brand-block {
+      width: 24px;
+      height: 24px;
+      background-color: #686868;
+      border: 2px solid #888888;
     }
 
     .brand h1 {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       letter-spacing: 1px;
       color: #ffffff;
       text-transform: uppercase;
     }
 
     .btn-create {
-      background-color: #555555;
-      color: #fff;
-      border: 1px solid #777;
-      padding: 6px 16px;
+      background-color: #333333;
+      color: #ffffff;
+      border: 1px solid #555555;
+      padding: 8px 18px;
       cursor: pointer;
       font-weight: bold;
+      transition: background 0.2s;
     }
 
     .btn-create:hover {
-      background-color: #666666;
+      background-color: #444444;
     }
 
-    /* CONTAINER PRINCIPALE */
+    /* LAYOUT PRINCIPALE */
     .container {
-      max-width: 900px;
-      margin: 20px auto;
+      max-width: 960px;
+      margin: 30px auto;
       padding: 0 16px;
       display: grid;
-      grid-template-columns: 1fr 260px;
-      gap: 20px;
+      grid-template-columns: 1fr 280px;
+      gap: 24px;
     }
 
-    /* FEED POST */
+    /* GRIGLIA SCHEDE / BOX */
     .feed {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 20px;
     }
 
-    .post {
-      background-color: #272729;
-      border: 1px solid #343536;
-      display: flex;
-      overflow: hidden;
-    }
-
-    .post:hover {
-      border-color: #898989;
-    }
-
-    /* VOTI (SINISTRA) */
-    .votes {
-      width: 40px;
-      background-color: #1e1e1f;
+    /* STRUTTURA DEL BOX STILE GIORNALEDEIGAMER */
+    .card {
+      background-color: #1e1e1e;
+      border: 1px solid #333333;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 8px 0;
-      gap: 4px;
-    }
-
-    .vote-btn {
-      background: none;
-      border: none;
-      color: #818384;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .vote-btn:hover {
-      color: #d7dadc;
-    }
-
-    .score {
-      font-size: 0.85rem;
-      font-weight: bold;
-    }
-
-    /* CONTENUTO POST */
-    .post-content {
-      padding: 12px;
-      flex: 1;
-    }
-
-    .post-meta {
-      font-size: 0.75rem;
-      color: #818384;
-      margin-bottom: 6px;
-    }
-
-    .post-meta span {
-      color: #4a90e2; /* Colore tag categoria */
-      font-weight: bold;
-    }
-
-    .post-title {
-      font-size: 1rem;
-      color: #ffffff;
-      margin-bottom: 8px;
-      text-decoration: none;
-      display: block;
-    }
-
-    .post-footer {
-      font-size: 0.75rem;
-      color: #818384;
-      display: flex;
       gap: 12px;
     }
 
-    /* SIDEBAR (DESTRA) */
+    .card:hover {
+      border-color: #555555;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #888888;
+    }
+
+    .card-tag {
+      background-color: #2a2a2a;
+      color: #4a90e2;
+      padding: 2px 8px;
+      border: 1px solid #444444;
+      font-weight: bold;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .card-title:hover {
+      color: #4a90e2;
+    }
+
+    .card-description {
+      font-size: 0.95rem;
+      color: #cccccc;
+    }
+
+    /* BARRA PULSANTI IN BASSO AL BOX */
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    .btn-action {
+      background-color: #252525;
+      color: #bbbbbb;
+      border: 1px solid #3a3a3a;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action:hover {
+      background-color: #333333;
+      color: #ffffff;
+    }
+
+    /* SIDEBAR */
     .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
-    .widget {
-      background-color: #272729;
-      border: 1px solid #343536;
-      padding: 14px;
+    .box-widget {
+      background-color: #1e1e1e;
+      border: 1px solid #333333;
+      padding: 16px;
     }
 
-    .widget h3 {
-      font-size: 0.9rem;
-      color: #818384;
-      margin-bottom: 8px;
+    .box-widget h3 {
+      font-size: 0.95rem;
+      color: #888888;
+      margin-bottom: 10px;
       text-transform: uppercase;
+      border-bottom: 1px solid #333333;
+      padding-bottom: 6px;
     }
 
-    .widget p {
-      font-size: 0.85rem;
-      color: #b3b3b3;
+    .box-widget p {
+      font-size: 0.88rem;
+      color: #aaaaaa;
     }
 
-    /* RESPONSIVE PER MOBILI */
-    @media (max-width: 640px) {
+    @media (max-width: 700px) {
       .container {
         grid-template-columns: 1fr;
       }
@@ -191,64 +194,56 @@
 </head>
 <body>
 
-  <!-- BARRA DI NAVIGAZIONE -->
   <header>
     <div class="brand">
-      <div class="brand-icon"></div>
+      <div class="brand-block"></div>
       <h1>StoneFiles</h1>
     </div>
     <button class="btn-create">+ New Post</button>
   </header>
 
-  <!-- CONTENUTO PRINCIPALE -->
   <div class="container">
     
-    <!-- FEED DEI POST -->
     <main class="feed">
 
-      <!-- POST 1 (Esempio) -->
-      <article class="post">
-        <div class="votes">
-          <button class="vote-btn">▲</button>
-          <span class="score">128</span>
-          <button class="vote-btn">▼</button>
+      <!-- BOX POST 1 -->
+      <article class="card">
+        <div class="card-header">
+          <span class="card-tag">c/beta-1-7-3</span>
+          <span>Posted by u/HerobrineHunter • 2h ago</span>
         </div>
-        <div class="post-content">
-          <div class="post-meta">
-            Posted in <span>c/beta-1-7-3</span> by u/HerobrineHunter • 2 hours ago
-          </div>
-          <a href="#" class="post-title">Found an incredible Monolith terrain generation in Beta 1.7.3! (Seed inside)</a>
-          <div class="post-footer">
-            <span>💬 34 Comments</span>
-            <span>🔗 Share</span>
-          </div>
+        <a href="#" class="card-title">Found an incredible Monolith terrain generation in Beta 1.7.3!</a>
+        <p class="card-description">
+          While exploring seed -125947321, I stumbled upon a giant natural stone monolith reaching world height limits. Here are the exact coordinates and world files for download.
+        </p>
+        <div class="card-actions">
+          <button class="btn-action">▲ 128</button>
+          <button class="btn-action">💬 34 Comments</button>
+          <button class="btn-action">🔗 Share</button>
         </div>
       </article>
 
-      <!-- POST 2 (Esempio) -->
-      <article class="post">
-        <div class="votes">
-          <button class="vote-btn">▲</button>
-          <span class="score">64</span>
-          <button class="vote-btn">▼</button>
+      <!-- BOX POST 2 -->
+      <article class="card">
+        <div class="card-header">
+          <span class="card-tag">c/retro-mods</span>
+          <span>Posted by u/AetherFan99 • 5h ago</span>
         </div>
-        <div class="post-content">
-          <div class="post-meta">
-            Posted in <span>c/retro-mods</span> by u/AetherFan99 • 5 hours ago
-          </div>
-          <a href="#" class="post-title">How to properly install ModLoader and Aether v1.0 on a clean jar</a>
-          <div class="post-footer">
-            <span>💬 12 Comments</span>
-            <span>🔗 Share</span>
-          </div>
+        <a href="#" class="card-title">How to properly install ModLoader and Aether v1.0 on a clean jar</a>
+        <p class="card-description">
+          A step-by-step guide on resolving black screen errors when patching ModLoader into your Minecraft Beta 1.7.3 jar file. Legacy audio fixes included.
+        </p>
+        <div class="card-actions">
+          <button class="btn-action">▲ 64</button>
+          <button class="btn-action">💬 12 Comments</button>
+          <button class="btn-action">🔗 Share</button>
         </div>
       </article>
 
     </main>
 
-    <!-- SIDEBAR INFORMAZIONI -->
     <aside class="sidebar">
-      <div class="widget">
+      <div class="box-widget">
         <h3>About StoneFiles</h3>
         <p>The community board and archive dedicated to Minecraft's Alpha and Beta eras. Preserving block history since day one.</p>
       </div>
