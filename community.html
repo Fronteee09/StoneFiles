@@ -1,4 +1,12 @@
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StoneFiles — Community</title>
+  <link rel="icon" type="image/png" href="stonefilelogo.png">
+  
+  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -17,7 +25,6 @@
       padding: 30px 16px;
     }
 
-    /* CONTENITORE PRINCIPALE UNIFICATO */
     .main-container {
       max-width: 680px;
       margin: 0 auto;
@@ -27,7 +34,7 @@
       width: 100%;
     }
 
-    /* HEADER BOX, CREATOR, SEARCH E POST CARD CONDIVIDONO LA STESSA LARGHEZZA AL 100% DEL CONTAINER */
+    /* TUTTI I BOX CONDIVIDONO LA STESSA LARGHEZZA AL 100% */
     .header-box, .creator-box, .search-box, .post-card {
       background: rgba(24, 32, 45, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -253,3 +260,288 @@
       cursor: pointer;
     }
   </style>
+
+  <!-- FIREBASE LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDuu5Y88zLYuPWqxHs9pis6OfeNDKoG8YE",
+      authDomain: "stonefiles-c2a40.firebaseapp.com",
+      projectId: "stonefiles-c2a40",
+      storageBucket: "stonefiles-c2a40.firebasestorage.app",
+      messagingSenderId: "855521046414",
+      appId: "1:855521046414:web:2996e4c8f2a6b47a72fedf",
+      measurementId: "G-WEFNP7N7DG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const ADMIN_NICKNAME = "Fronte ★";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const mailBtn = document.getElementById("mail-btn");
+      const postForm = document.getElementById("post-form");
+      const postsFeed = document.getElementById("posts-feed");
+      const mediaInputGroup = document.getElementById("media-input-group");
+      const adminModal = document.getElementById("admin-modal");
+      const reportsList = document.getElementById("reports-list");
+      const closeModal = document.getElementById("close-modal");
+      const searchInput = document.getElementById("search-input");
+
+      let allPosts = [];
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const nickname = user.displayName || "User";
+          if (nickname === ADMIN_NICKNAME) {
+            mailBtn.style.display = "block";
+            if(mediaInputGroup) mediaInputGroup.style.display = "block";
+            loadReportsCount();
+          }
+        }
+      });
+
+      mailBtn.addEventListener("click", () => {
+        adminModal.style.display = "flex";
+        loadReports();
+      });
+      closeModal.addEventListener("click", () => adminModal.style.display = "none");
+
+      postForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        if (!user) {
+          alert("You must log in to post!");
+          window.location.href = "account.html";
+          return;
+        }
+
+        const title = document.getElementById("post-title-input").value.trim();
+        const body = document.getElementById("post-body-input").value.trim();
+        const mediaUrl = document.getElementById("post-media-input") ? document.getElementById("post-media-input").value.trim() : "";
+        const nickname = user.displayName || "Anonym";
+
+        if (!title || !body) return;
+
+        try {
+          await addDoc(collection(db, "posts"), {
+            title,
+            body,
+            mediaUrl: nickname === ADMIN_NICKNAME ? mediaUrl : "",
+            author: nickname,
+            likes: 0,
+            createdAt: serverTimestamp()
+          });
+
+          postForm.reset();
+          loadPosts();
+        } catch (error) {
+          console.error("Error publishing post:", error);
+        }
+      });
+
+      async function loadPosts() {
+        postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>Loading posts...</p>";
+        try {
+          const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+          const querySnapshot = await getDocs(q);
+          
+          allPosts = [];
+          querySnapshot.forEach((docSnap) => {
+            allPosts.push({ id: docSnap.id, ...docSnap.data() });
+          });
+
+          renderPosts(allPosts);
+        } catch (err) {
+          console.error("Error loading posts:", err);
+          postsFeed.innerHTML = "<p style='color: #e74c3c; text-align:center;'>Error loading posts.</p>";
+        }
+      }
+
+      function renderPosts(postsToRender) {
+        postsFeed.innerHTML = "";
+        if (postsToRender.length === 0) {
+          postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>No posts found.</p>";
+          return;
+        }
+
+        const currentUser = auth.currentUser;
+        const isUserAdmin = currentUser && currentUser.displayName === ADMIN_NICKNAME;
+
+        postsToRender.forEach((post) => {
+          const card = document.createElement("article");
+          card.className = "post-card";
+          
+          let mediaHTML = "";
+          if (post.mediaUrl) {
+            if (post.mediaUrl.endsWith(".mp4") || post.mediaUrl.includes("video")) {
+              mediaHTML = `<video src="${post.mediaUrl}" controls class="post-media"></video>`;
+            } else {
+              mediaHTML = `<img src="${post.mediaUrl}" alt="Media" class="post-media" />`;
+            }
+          }
+
+          card.innerHTML = `
+            <div class="post-meta">
+              <span>u/${escapeHtml(post.author || "Anonym")}</span>
+            </div>
+            <h3 class="post-title">${escapeHtml(post.title)}</h3>
+            <p class="post-text">${escapeHtml(post.body)}</p>
+            ${mediaHTML}
+            <div class="post-footer">
+              <button class="action-btn like-btn" data-id="${post.id}">▲ ${post.likes || 0}</button>
+              <button class="action-btn btn-report report-btn" data-id="${post.id}">Report</button>
+              ${isUserAdmin ? `<button class="action-btn btn-delete delete-btn" data-id="${post.id}">Delete</button>` : ""}
+            </div>
+          `;
+
+          card.querySelector(".like-btn").addEventListener("click", async () => {
+            await updateDoc(doc(db, "posts", post.id), { likes: increment(1) });
+            loadPosts();
+          });
+
+          card.querySelector(".report-btn").addEventListener("click", async () => {
+            await addDoc(collection(db, "reports"), {
+              postId: post.id,
+              postTitle: post.title,
+              author: post.author,
+              reportedAt: serverTimestamp()
+            });
+            alert("Post reported to Fronte ★.");
+            loadReportsCount();
+          });
+
+          if (isUserAdmin) {
+            card.querySelector(".delete-btn").addEventListener("click", async () => {
+              if (confirm("Do you want to delete this post?")) {
+                await deleteDoc(doc(db, "posts", post.id));
+                loadPosts();
+                loadReportsCount();
+              }
+            });
+          }
+
+          postsFeed.appendChild(card);
+        });
+      }
+
+      searchInput.addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allPosts.filter(p => 
+          p.title.toLowerCase().includes(term) || p.body.toLowerCase().includes(term)
+        );
+        renderPosts(filtered);
+      });
+
+      async function loadReportsCount() {
+        try {
+          const snapshot = await getDocs(collection(db, "reports"));
+          mailBtn.textContent = `✉ Mail (${snapshot.size})`;
+        } catch(e) {}
+      }
+
+      async function loadReports() {
+        try {
+          const q = query(collection(db, "reports"), orderBy("reportedAt", "desc"));
+          const snapshot = await getDocs(q);
+          reportsList.innerHTML = "";
+
+          if (snapshot.empty) {
+            reportsList.innerHTML = "<p style='color: #8899a6; font-size: 0.9rem;'>No reports received.</p>";
+            return;
+          }
+
+          snapshot.forEach((docSnap) => {
+            const rep = docSnap.data();
+            const div = document.createElement("div");
+            div.style.cssText = "background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.9rem;";
+            div.innerHTML = `
+              <strong>Post:</strong> "${escapeHtml(rep.postTitle)}" <br>
+              <strong>Author:</strong> u/${escapeHtml(rep.author)} <br>
+              <button class="action-btn btn-delete" style="margin-top: 8px;" onclick="window.resolveReport('${docSnap.id}', '${rep.postId}')">Delete Post & Remove Report</button>
+            `;
+            reportsList.appendChild(div);
+          });
+        } catch (err) {
+          console.error("Error loading reports:", err);
+        }
+      }
+
+      window.resolveReport = async function(reportId, postId) {
+        if(confirm("Do you want to delete the reported post and clear this report?")) {
+          try {
+            await deleteDoc(doc(db, "posts", postId));
+          } catch(e) {}
+          await deleteDoc(doc(db, "reports", reportId));
+          loadReports();
+          loadPosts();
+          loadReportsCount();
+        }
+      };
+
+      function escapeHtml(text) {
+        return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "";
+      }
+
+      loadPosts();
+    });
+  </script>
+</head>
+<body>
+
+  <div class="main-container">
+
+    <!-- HEADER -->
+    <header class="header-box">
+      <button id="mail-btn" class="mail-btn">✉ Mail (0)</button>
+      <h1>Minecraft Community</h1>
+      <p>Share ideas, builds, and comments with other gamers.</p>
+      <a href="index.html" class="btn-gold">← Visit the Golden Era</a>
+    </header>
+
+    <!-- POST CREATOR -->
+    <section class="creator-box">
+      <form id="post-form">
+        <input type="text" id="post-title-input" class="form-input" placeholder="Post title..." required />
+        <textarea id="post-body-input" class="form-input" placeholder="Write your message..." required></textarea>
+        
+        <div id="media-input-group" style="display: none;">
+          <input type="text" id="post-media-input" class="form-input" placeholder="Image or .mp4 Video URL (Fronte ★ only)" />
+        </div>
+
+        <button type="submit" class="btn-publish">Publish Post</button>
+      </form>
+    </section>
+
+    <!-- SEARCH BAR -->
+    <section class="search-box">
+      <input type="text" id="search-input" class="search-input" placeholder="🔍 Search posts..." />
+    </section>
+
+    <!-- POSTS FEED -->
+    <div id="posts-feed" style="display: flex; flex-direction: column; gap: 16px; width: 100%;">
+      <!-- Dynamic posts will load here -->
+    </div>
+
+  </div>
+
+  <!-- ADMIN MODAL -->
+  <div id="admin-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color: #fff; font-size: 1.1rem;">Received Reports (Mail)</h3>
+        <button id="close-modal" class="close-modal">&times;</button>
+      </div>
+      <div id="reports-list">
+        <p style="color: #8899a6; font-size: 0.9rem;">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
