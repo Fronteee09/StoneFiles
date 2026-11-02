@@ -33,7 +33,7 @@
       gap: 20px;
     }
 
-    /* HEADER BOX PRINCIPALE */
+    /* HEADER BOX */
     .header-box {
       background: rgba(24, 32, 45, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -57,7 +57,7 @@
       border-radius: 6px;
       cursor: pointer;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-      display: none; /* Mostrato solo per Fronte ★ */
+      display: none;
     }
 
     .mail-btn:hover {
@@ -95,7 +95,7 @@
       filter: brightness(1.1);
     }
 
-    /* BOX FORM CREAZIONE POST */
+    /* CREATOR, SEARCH, POST CARDS */
     .creator-box, .search-box, .post-card {
       background: rgba(24, 32, 45, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -143,7 +143,6 @@
       filter: brightness(1.1);
     }
 
-    /* BARRA DI RICERCA */
     .search-box {
       padding: 12px 20px;
     }
@@ -161,7 +160,6 @@
       color: #8899a6;
     }
 
-    /* POST CARD */
     .post-card {
       display: flex;
       flex-direction: column;
@@ -219,17 +217,13 @@
       color: #fff;
     }
 
-    .btn-report {
-      color: #e74c3c;
-    }
-
     .btn-delete {
       background: rgba(231, 76, 60, 0.2);
       border-color: rgba(231, 76, 60, 0.4);
       color: #e74c3c;
     }
 
-    /* MODALE ADMIN MAIL (PANNELLO SEGNALAZIONI) */
+    /* ADMIN MODAL */
     #admin-modal {
       display: none;
       position: fixed;
@@ -304,7 +298,7 @@
 
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          const nickname = user.displayName || "Utente";
+          const nickname = user.displayName || "User";
           if (nickname === ADMIN_NICKNAME) {
             mailBtn.style.display = "block";
             if(mediaInputGroup) mediaInputGroup.style.display = "block";
@@ -313,19 +307,17 @@
         }
       });
 
-      // Apri/Chiudi modale Mail Admin
       mailBtn.addEventListener("click", () => {
         adminModal.style.display = "flex";
         loadReports();
       });
       closeModal.addEventListener("click", () => adminModal.style.display = "none");
 
-      // Pubblica Post
       postForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const user = auth.currentUser;
         if (!user) {
-          alert("Devi effettuare l'accesso per postare!");
+          alert("You must log in to post!");
           window.location.href = "account.html";
           return;
         }
@@ -350,13 +342,12 @@
           postForm.reset();
           loadPosts();
         } catch (error) {
-          console.error("Errore pubblicazione:", error);
+          console.error("Error publishing post:", error);
         }
       });
 
-      // Carica Post da Firestore
       async function loadPosts() {
-        postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>Caricamento post...</p>";
+        postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>Loading posts...</p>";
         try {
           const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
           const querySnapshot = await getDocs(q);
@@ -368,15 +359,15 @@
 
           renderPosts(allPosts);
         } catch (err) {
-          console.error("Errore caricamento:", err);
-          postsFeed.innerHTML = "<p style='color: #e74c3c; text-align:center;'>Errore nel caricamento dei post.</p>";
+          console.error("Error loading posts:", err);
+          postsFeed.innerHTML = "<p style='color: #e74c3c; text-align:center;'>Error loading posts.</p>";
         }
       }
 
       function renderPosts(postsToRender) {
         postsFeed.innerHTML = "";
         if (postsToRender.length === 0) {
-          postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>Nessun post trovato.</p>";
+          postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>No posts found.</p>";
           return;
         }
 
@@ -406,17 +397,15 @@
             <div class="post-footer">
               <button class="action-btn like-btn" data-id="${post.id}">▲ ${post.likes || 0}</button>
               <button class="action-btn btn-report report-btn" data-id="${post.id}">Report</button>
-              ${isUserAdmin ? `<button class="action-btn btn-delete delete-btn" data-id="${post.id}">Elimina</button>` : ""}
+              ${isUserAdmin ? `<button class="action-btn btn-delete delete-btn" data-id="${post.id}">Delete</button>` : ""}
             </div>
           `;
 
-          // Evento Like
           card.querySelector(".like-btn").addEventListener("click", async () => {
             await updateDoc(doc(db, "posts", post.id), { likes: increment(1) });
             loadPosts();
           });
 
-          // Evento Report
           card.querySelector(".report-btn").addEventListener("click", async () => {
             await addDoc(collection(db, "reports"), {
               postId: post.id,
@@ -424,14 +413,13 @@
               author: post.author,
               reportedAt: serverTimestamp()
             });
-            alert("Post segnalato a Fronte ★.");
+            alert("Post reported to Fronte ★.");
             loadReportsCount();
           });
 
-          // Evento Delete (Admin)
           if (isUserAdmin) {
             card.querySelector(".delete-btn").addEventListener("click", async () => {
-              if (confirm("Vuoi eliminare questo post?")) {
+              if (confirm("Do you want to delete this post?")) {
                 await deleteDoc(doc(db, "posts", post.id));
                 loadPosts();
                 loadReportsCount();
@@ -443,7 +431,6 @@
         });
       }
 
-      // Ricerca in tempo reale
       searchInput.addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = allPosts.filter(p => 
@@ -466,7 +453,7 @@
           reportsList.innerHTML = "";
 
           if (snapshot.empty) {
-            reportsList.innerHTML = "<p style='color: #8899a6; font-size: 0.9rem;'>Nessuna segnalazione ricevuta.</p>";
+            reportsList.innerHTML = "<p style='color: #8899a6; font-size: 0.9rem;'>No reports received.</p>";
             return;
           }
 
@@ -476,18 +463,18 @@
             div.style.cssText = "background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.9rem;";
             div.innerHTML = `
               <strong>Post:</strong> "${escapeHtml(rep.postTitle)}" <br>
-              <strong>Autore:</strong> u/${escapeHtml(rep.author)} <br>
-              <button class="action-btn btn-delete" style="margin-top: 8px;" onclick="window.resolveReport('${docSnap.id}', '${rep.postId}')">Elimina Post & Rimuovi</button>
+              <strong>Author:</strong> u/${escapeHtml(rep.author)} <br>
+              <button class="action-btn btn-delete" style="margin-top: 8px;" onclick="window.resolveReport('${docSnap.id}', '${rep.postId}')">Delete Post & Remove Report</button>
             `;
             reportsList.appendChild(div);
           });
         } catch (err) {
-          console.error("Errore report:", err);
+          console.error("Error loading reports:", err);
         }
       }
 
       window.resolveReport = async function(reportId, postId) {
-        if(confirm("Vuoi eliminare il post segnalato e chiudere la segnalazione?")) {
+        if(confirm("Do you want to delete the reported post and clear this report?")) {
           try {
             await deleteDoc(doc(db, "posts", postId));
           } catch(e) {}
@@ -510,50 +497,50 @@
 
   <div class="main-container">
 
-    <!-- HEADER STYLE SCREENSHOT -->
+    <!-- HEADER -->
     <header class="header-box">
       <button id="mail-btn" class="mail-btn">✉ Mail (0)</button>
       <h1>Minecraft Community</h1>
-      <p>Condividi idee, costruzioni e commenti con gli altri gamer.</p>
-      <a href="index.html" class="btn-gold">← Visita l'Era Dell'Oro</a>
+      <p>Share ideas, builds, and comments with other gamers.</p>
+      <a href="index.html" class="btn-gold">← Visit the Golden Era</a>
     </header>
 
-    <!-- BOX CREAZIONE POST -->
+    <!-- POST CREATOR -->
     <section class="creator-box">
       <form id="post-form">
-        <input type="text" id="post-title-input" class="form-input" placeholder="Titolo del post..." required />
-        <textarea id="post-body-input" class="form-input" placeholder="Scrivi il tuo messaggio..." required></textarea>
+        <input type="text" id="post-title-input" class="form-input" placeholder="Post title..." required />
+        <textarea id="post-body-input" class="form-input" placeholder="Write your message..." required></textarea>
         
-        <!-- Campo immagine/video visibile solo a Fronte ★ -->
+        <!-- Media input visible only to Fronte ★ -->
         <div id="media-input-group" style="display: none;">
-          <input type="text" id="post-media-input" class="form-input" placeholder="URL Immagine o Video .mp4 (Solo per Fronte ★)" />
+          <input type="text" id="post-media-input" class="form-input" placeholder="Image or .mp4 Video URL (Fronte ★ only)" />
         </div>
 
-        <button type="submit" class="btn-publish">Pubblica Post</button>
+        <button type="submit" class="btn-publish">Publish Post</button>
       </form>
     </section>
 
-    <!-- BARRA DI RICERCA -->
+    <!-- SEARCH BAR -->
     <section class="search-box">
-      <input type="text" id="search-input" class="search-input" placeholder="🔍 Cerca nei post..." />
+      <input type="text" id="search-input" class="search-input" placeholder="🔍 Search posts..." />
     </section>
 
-    <!-- FEED DEI POST -->
+    <!-- POSTS FEED -->
     <section class="main-container" id="posts-feed" style="gap: 16px;">
-      <!-- I post caricati da Firebase appariranno qui -->
+      <!-- Dynamic posts will load here -->
     </section>
 
   </div>
 
-  <!-- MODALE MAIL ADMIN -->
+  <!-- ADMIN MODAL -->
   <div id="admin-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="color: #fff; font-size: 1.1rem;">Segnalazioni Ricevute (Mail)</h3>
+        <h3 style="color: #fff; font-size: 1.1rem;">Received Reports (Mail)</h3>
         <button id="close-modal" class="close-modal">&times;</button>
       </div>
       <div id="reports-list">
-        <p style="color: #8899a6; font-size: 0.9rem;">Caricamento...</p>
+        <p style="color: #8899a6; font-size: 0.9rem;">Loading...</p>
       </div>
     </div>
   </div>
