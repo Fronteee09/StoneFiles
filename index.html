@@ -27,7 +27,7 @@
       padding: 20px 16px;
     }
 
-    /* BARRA IN ALTO (LOGIN / ACCEDI) */
+    /* BARRA IN ALTO (ACCOUNT) */
     .top-bar {
       max-width: 750px;
       margin: 0 auto 16px auto;
@@ -35,7 +35,7 @@
       justify-content: flex-end;
     }
 
-    .btn-login {
+    .btn-account {
       background-color: #1e1e1e;
       color: #ffffff;
       border: 1px solid #444444;
@@ -43,9 +43,11 @@
       font-size: 0.85rem;
       cursor: pointer;
       font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    .btn-login:hover {
+    .btn-account:hover {
       background-color: #2e2e2e;
     }
 
@@ -151,9 +153,9 @@
 </head>
 <body>
 
-  <!-- BOTTONE LOGIN -->
+  <!-- PULSANTE ACCOUNT IN ALTO -->
   <div class="top-bar">
-    <button class="btn-login">Accedi</button>
+    <a href="account.html" class="btn-account">Account</a>
   </div>
 
   <div class="main-container">
@@ -174,7 +176,7 @@
 
     <!-- BOX SOTTO PER ALTRI CONTENUTI -->
     <section class="secondary-box">
-      <h2>Who am I?</h2>
+      <h2>Chi siamo</h2>
       <p>This is a place to share seeds, legacy mods, historical guides, and memories from the golden era of Minecraft.</p>
     </section>
 
