@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ù<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -11,7 +11,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      border-radius: 0px !important;
+      border-radius: 0px !important; /* Visuale squadrata retro */
     }
 
     body {
@@ -28,11 +28,10 @@
 
     /* BARRA IN ALTO */
     .top-bar {
-      max-width: 750px;
+      max-width: 450px;
       margin: 0 auto 16px auto;
       display: flex;
-      justify-content: flex-between;
-      align-items: center;
+      justify-content: flex-start;
     }
 
     .btn-back {
@@ -44,6 +43,7 @@
       cursor: pointer;
       font-weight: bold;
       text-decoration: none;
+      display: inline-block;
     }
 
     .btn-back:hover {
@@ -52,57 +52,107 @@
 
     /* CONTENITORE PRINCIPALE */
     .main-container {
-      max-width: 750px;
+      max-width: 450px;
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
     }
 
     /* BOX ACCOUNT */
     .account-box {
-      background-color: rgba(30, 30, 30, 0.9);
+      background-color: rgba(30, 30, 30, 0.95);
       border: 1px solid #333333;
       padding: 30px 24px;
-      text-align: center;
     }
 
     .account-box h1 {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       color: #ffffff;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       text-transform: uppercase;
+      text-align: center;
     }
 
     .account-box p {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       color: #aaaaaa;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    .btn-auth {
+    /* FORM STILE */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: #cccccc;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .form-group input {
+      width: 100%;
+      background-color: #181818;
+      border: 1px solid #444444;
+      color: #ffffff;
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #777777;
+    }
+
+    .btn-submit {
+      width: 100%;
       background-color: #3a3a3a;
       color: #ffffff;
       border: 1px solid #555555;
-      padding: 10px 24px;
+      padding: 10px;
       font-size: 0.9rem;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 5px;
       transition: background 0.2s;
     }
 
-    .btn-auth:hover {
+    .btn-submit:hover {
       background-color: #4a4a4a;
+    }
+
+    /* TOGGLE TRA LOGIN E SIGN UP */
+    .toggle-text {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: #aaaaaa;
+    }
+
+    .toggle-text button {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      text-decoration: underline;
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    #status-message {
+      margin-top: 15px;
+      font-size: 0.85rem;
+      text-align: center;
+      font-weight: bold;
     }
   </style>
 
-  <!-- SDK FIREBASE (ES MODULES VIA CDN) -->
+  <!-- FIREBASE MODULES -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // Configurazione del tuo progetto Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDuu5Y88zLYuPWqxHs9pis6OfeNDKoG8YE",
       authDomain: "stonefiles-c2a40.firebaseapp.com",
@@ -113,42 +163,125 @@
       measurementId: "G-WEFNP7N7DG"
     };
 
-    // Inizializzazione
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
-    // Gestione del bottone di Login con Google
+    let isLoginMode = true;
+
     document.addEventListener("DOMContentLoaded", () => {
-      const loginBtn = document.getElementById("login-google-btn");
-      if (loginBtn) {
-        loginBtn.addEventListener("click", async () => {
-          try {
-            const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-            alert(`Benvenuto in StoneFiles, ${user.displayName}!`);
-          } catch (error) {
-            console.error("Errore di autenticazione:", error);
-            alert("Errore durante l'accesso.");
+      const formTitle = document.getElementById("form-title");
+      const formSubtitle = document.getElementById("form-subtitle");
+      const submitBtn = document.getElementById("submit-btn");
+      const toggleBtn = document.getElementById("toggle-btn");
+      const toggleLabel = document.getElementById("toggle-label");
+      const statusMsg = document.getElementById("status-message");
+
+      toggleBtn.addEventListener("click", () => {
+        isLoginMode = !isLoginMode;
+        statusMsg.textContent = "";
+        
+        if (isLoginMode) {
+          formTitle.textContent = "Accedi";
+          formSubtitle.textContent = "Inserisci Nickname e Password per entrare";
+          submitBtn.textContent = "Entra";
+          toggleLabel.textContent = "Non hai un account?";
+          toggleBtn.textContent = "Registrati";
+        } else {
+          formTitle.textContent = "Registrati";
+          formSubtitle.textContent = "Crea il tuo profilo con Nickname e Password";
+          submitBtn.textContent = "Crea Account";
+          toggleLabel.textContent = "Hai già un account?";
+          toggleBtn.textContent = "Accedi";
+        }
+      });
+
+      document.getElementById("auth-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        statusMsg.style.color = "#aaaaaa";
+        statusMsg.textContent = "Caricamento in corso...";
+
+        const rawNickname = document.getElementById("nickname").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!rawNickname) {
+          statusMsg.style.color = "#ff6b6b";
+          statusMsg.textContent = "Inserisci un Nickname.";
+          return;
+        }
+
+        if (password.length < 6) {
+          statusMsg.style.color = "#ff6b6b";
+          statusMsg.textContent = "La password deve contenere almeno 6 caratteri.";
+          return;
+        }
+
+        // Converte il nickname pulito per la mail interna di Firebase
+        const formattedEmail = `${rawNickname.toLowerCase().replace(/[^a-z0-9]/g, "")}@stonefiles.local`;
+
+        try {
+          if (isLoginMode) {
+            // ACCEDI
+            await signInWithEmailAndPassword(auth, formattedEmail, password);
+            statusMsg.style.color = "#51cf66";
+            statusMsg.textContent = "Accesso effettuato! Ritorno alla home...";
+            setTimeout(() => window.location.href = "index.html", 1200);
+          } else {
+            // REGISTRATI
+            const userCredential = await createUserWithEmailAndPassword(auth, formattedEmail, password);
+            await updateProfile(userCredential.user, { displayName: rawNickname });
+            statusMsg.style.color = "#51cf66";
+            statusMsg.textContent = "Account creato con successo! Ritorno alla home...";
+            setTimeout(() => window.location.href = "index.html", 1200);
           }
-        });
-      }
+        } catch (error) {
+          console.error("Firebase Auth Error:", error.code, error.message);
+          statusMsg.style.color = "#ff6b6b";
+
+          if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" || error.code === "auth/user-not-found") {
+            statusMsg.textContent = "Nickname o Password errati.";
+          } else if (error.code === "auth/email-already-in-use") {
+            statusMsg.textContent = "Questo Nickname è già stato preso.";
+          } else if (error.code === "auth/operation-not-allowed") {
+            statusMsg.textContent = "Attiva 'Email/Password' nella console di Firebase!";
+          } else {
+            statusMsg.textContent = "Errore: " + error.message;
+          }
+        }
+      });
     });
   </script>
 </head>
 <body>
 
   <div class="top-bar">
-    <a href="index.html" class="btn-back">← Torna alla Home</a>
+    <a href="index.html" class="btn-back">← Home</a>
   </div>
 
   <div class="main-container">
     <main class="account-box">
-      <h1>Account Area</h1>
-      <p>Accedi per pubblicare post, votare e commentare su StoneFiles.</p>
+      <h1 id="form-title">Accedi</h1>
+      <p id="form-subtitle">Inserisci Nickname e Password per entrare</p>
       
-      <button id="login-google-btn" class="btn-auth">Accedi con Google</button>
+      <form id="auth-form">
+        <div class="form-group">
+          <label for="nickname">Nickname</label>
+          <input type="text" id="nickname" placeholder="es. Herobrine" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn-submit">Entra</button>
+      </form>
+
+      <div class="toggle-text">
+        <span id="toggle-label">Non hai un account?</span>
+        <button type="button" id="toggle-btn">Registrati</button>
+      </div>
+
+      <div id="status-message"></div>
     </main>
   </div>
 
