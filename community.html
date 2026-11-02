@@ -1,1 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StoneFiles — Community</title>
+  <link rel="icon" type="image/png" href="stonefilelogo.png">
+  
+  <style>
+    /* RESET BASE */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0px !important;
+    }
 
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('sfondoindex.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+
+    /* BARRA IN ALTO */
+    .top-bar {
+      max-width: 650px;
+      margin: 0 auto 16px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-back {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      border: 1px solid #444444;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-back:hover {
+      background-color: #2e2e2e;
+    }
+
+    .user-status {
+      font-size: 0.85rem;
+      color: #aaaaaa;
+    }
+
+    /* CONTENITORE PRINCIPALE */
+    .main-container {
+      max-width: 650px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* BOX CREAZIONE POST */
+    .post-creator-box {
+      background-color: rgba(30, 30, 30, 0.95);
+      border: 1px solid #333333;
+      padding: 24px;
+    }
+
+    .post-creator-box h2 {
+      font-size: 1.2rem;
+      color: #ffffff;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      background-color: #181818;
+      border: 1px solid #444444;
+      color: #ffffff;
+      padding: 10px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #777777;
+    }
+
+    .btn-publish {
+      background-color: #3a3a3a;
+      color: #ffffff;
+      border: 1px solid #555555;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-publish:hover {
+      background-color: #4a4a4a;
+    }
+
+    /* FEED DEI POST */
+    .feed-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .post-card {
+      background-color: rgba(30, 30, 30, 0.95);
+      border: 1px solid #333333;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .post-header {
+      font-size: 0.8rem;
+      color: #888888;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .post-title {
+      font-size: 1.1rem;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .post-body {
+      font-size: 0.9rem;
+      color: #cccccc;
+      white-space: pre-wrap;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    .btn-action {
+      background-color: #252525;
+      color: #bbbbbb;
+      border: 1px solid #3a3a3a;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .btn-action:hover {
+      background-color: #333333;
+      color: #ffffff;
+    }
+
+    .btn-report {
+      color: #ff6b6b;
+    }
+  </style>
+
+  <!-- FIREBASE LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, add슐, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDuu5Y88zLYuPWqxHs9pis6OfeNDKoG8YE",
+      authDomain: "stonefiles-c2a40.firebaseapp.com",
+      projectId: "stonefiles-c2a40",
+      storageBucket: "stonefiles-c2a40.firebasestorage.app",
+      messagingSenderId: "855521046414",
+      appId: "1:855521046414:web:2996e4c8f2a6b47a72fedf",
+      measurementId: "G-WEFNP7N7DG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const userStatusEl = document.getElementById("user-status");
+      const postForm = document.getElementById("post-form");
+      const postsFeed = document.getElementById("posts-feed");
+
+      // Controlla se l'utente è loggato
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          userStatusEl.textContent = `Logged as: ${user.displayName || "Utente"}`;
+        } else {
+          currentUser = null;
+          userStatusEl.innerHTML = `<a href="account.html" style="color: #ff6b6b;">Accedi per postare</a>`;
+        }
+      });
+
+      // Gestione invio post
+      postForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!currentUser) {
+          alert("Devi effettuare l'accesso per pubblicare un post!");
+          window.location.href = "account.html";
+          return;
+        }
+
+        const title = document.getElementById("post-title-input").value.trim();
+        const body = document.getElementById("post-body-input").value.trim();
+
+        if (!title || !body) return;
+
+        try {
+          await addDoc(collection(db, "posts"), {
+            title: title,
+            body: body,
+            author: currentUser.displayName || "Anonym",
+            likes: 0,
+            createdAt: serverTimestamp()
+          });
+
+          document.getElementById("post-title-input").value = "";
+          document.getElementById("post-body-input").value = "";
+          loadPosts();
+        } catch (error) {
+          console.error("Errore pubblicazione post:", error);
+          alert("Errore durante la pubblicazione.");
+        }
+      });
+
+      // Carica i post dal database Firestore
+      async function loadPosts() {
+        postsFeed.innerHTML = "<p style='color: #888;'>Caricamento post...</p>";
+        try {
+          const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+          const querySnapshot = await getDocs(q);
+          
+          postsFeed.innerHTML = "";
+          if (querySnapshot.empty) {
+            postsFeed.innerHTML = "<p style='color: #888;'>Nessun post nella community. Sii il primo a scrivere!</p>";
+            return;
+          }
+
+          querySnapshot.forEach((documentSnapshot) => {
+            const post = documentSnapshot.data();
+            const postId = documentSnapshot.id;
+
+            const card = document.createElement("article");
+            card.className = "post-card";
+            card.innerHTML = `
+              <div class="post-header">
+                <span>Posted by u/${post.author || "Anonym"}</span>
+              </div>
+              <h3 class="post-title">${escapeHtml(post.title)}</h3>
+              <p class="post-body">${escapeHtml(post.body)}</p>
+              <div class="post-actions">
+                <button class="btn-action like-btn" data-id="${postId}">▲ ${post.likes || 0} Likes</button>
+                <button class="btn-action btn-report report-btn" data-id="${postId}">Report</button>
+              </div>
+            `;
+
+            // Evento per mettere Like
+            card.querySelector(".like-btn").addEventListener("click", async () => {
+              try {
+                const postRef = doc(db, "posts", postId);
+                await updateDoc(postRef, {
+                  likes: increment(1)
+                });
+                loadPosts(); // ricarica la lista aggiornata
+              } catch (err) {
+                console.error("Errore like:", err);
+              }
+            });
+
+            // Evento per il Report
+            card.querySelector(".report-btn").addEventListener("click", () => {
+              alert("Post segnalato ai moderatori. Grazie!");
+            });
+
+            postsFeed.appendChild(card);
+          });
+        } catch (err) {
+          console.error("Errore caricamento post:", err);
+          postsFeed.innerHTML = "<p style='color: #ff6b6b;'>Impossibile caricare i post (verifica le regole di sicurezza di Firestore).</p>";
+        }
+      }
+
+      // Funzione di sicurezza base anti-XSS per il testo
+      function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      // Carica i post all'avvio
+      loadPosts();
+    });
+  </script>
+</head>
+<body>
+
+  <div class="top-bar">
+    <a href="index.html" class="btn-back">← Home</a>
+    <span id="user-status" class="user-status">Verifica accesso...</span>
+  </div>
+
+  <div class="main-container">
+
+    <!-- BOX CREAZIONE POST -->
+    <section class="post-creator-box">
+      <h2>Crea un nuovo post</h2>
+      <form id="post-form">
+        <div class="form-group">
+          <input type="text" id="post-title-input" placeholder="Titolo del post..." required />
+        </div>
+        <div class="form-group">
+          <textarea id="post-body-input" placeholder="Scrivi il corpo del post..." required></textarea>
+        </div>
+        <button type="submit" class="btn-publish">Pubblica</button>
+      </form>
+    </section>
+
+    <!-- FEED DEI POST -->
+    <section class="feed-container" id="posts-feed">
+      <!-- I post caricati da Firebase appariranno qui dinamicamente -->
+    </section>
+
+  </div>
+
+</body>
+</html>
