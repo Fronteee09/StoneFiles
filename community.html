@@ -7,12 +7,10 @@
   <link rel="icon" type="image/png" href="stonefilelogo.png">
   
   <style>
-    /* RESET BASE */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      border-radius: 0px !important;
     }
 
     body {
@@ -24,170 +22,253 @@
       background-attachment: fixed;
       color: #e0e0e0;
       min-height: 100vh;
-      padding: 20px 16px;
+      padding: 30px 16px;
     }
 
-    /* BARRA IN ALTO */
-    .top-bar {
-      max-width: 650px;
-      margin: 0 auto 16px auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .btn-back {
-      background-color: #1e1e1e;
-      color: #ffffff;
-      border: 1px solid #444444;
-      padding: 6px 16px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      font-weight: bold;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-back:hover {
-      background-color: #2e2e2e;
-    }
-
-    .user-status {
-      font-size: 0.85rem;
-      color: #aaaaaa;
-    }
-
-    /* CONTENITORE PRINCIPALE */
     .main-container {
-      max-width: 650px;
+      max-width: 680px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    /* BOX CREAZIONE POST / PANNELLO ADMIN */
-    .post-creator-box, .admin-panel {
-      background-color: rgba(30, 30, 30, 0.95);
-      border: 1px solid #333333;
+    /* HEADER BOX PRINCIPALE */
+    .header-box {
+      background: rgba(24, 32, 45, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
       padding: 24px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
-    .post-creator-box h2, .admin-panel h2 {
-      font-size: 1.2rem;
+    .mail-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(to bottom, #ffaa00, #e69500);
+      color: #111;
+      border: none;
+      padding: 6px 14px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      display: none; /* Mostrato solo per Fronte ★ */
+    }
+
+    .mail-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    .header-box h1 {
+      font-size: 2rem;
       color: #ffffff;
-      margin-bottom: 14px;
-      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
     }
 
-    .form-group {
+    .header-box p {
+      font-size: 0.9rem;
+      color: #b0c4de;
+      margin-bottom: 16px;
+    }
+
+    .btn-gold {
+      background: linear-gradient(to bottom, #f39c12, #d35400);
+      color: #ffffff;
+      border: none;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .btn-gold:hover {
+      filter: brightness(1.1);
+    }
+
+    /* BOX FORM CREAZIONE POST */
+    .creator-box, .search-box, .post-card {
+      background: rgba(24, 32, 45, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      color: #ffffff;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-family: inherit;
       margin-bottom: 12px;
     }
 
-    .form-group input, .form-group textarea {
-      width: 100%;
-      background-color: #181818;
-      border: 1px solid #444444;
-      color: #ffffff;
-      padding: 10px;
-      font-size: 0.9rem;
-      font-family: inherit;
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .form-group input:focus, .form-group textarea:focus {
+    .form-input:focus {
       outline: none;
-      border-color: #777777;
+      border-color: #3498db;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 90px;
     }
 
     .btn-publish {
-      background-color: #3a3a3a;
+      background: linear-gradient(to bottom, #3498db, #2980b9);
       color: #ffffff;
-      border: 1px solid #555555;
-      padding: 8px 20px;
-      font-size: 0.9rem;
+      border: none;
+      padding: 10px 20px;
       font-weight: bold;
+      font-size: 0.9rem;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     .btn-publish:hover {
-      background-color: #4a4a4a;
+      filter: brightness(1.1);
     }
 
-    /* FEED DEI POST */
-    .feed-container {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    /* BARRA DI RICERCA */
+    .search-box {
+      padding: 12px 20px;
     }
 
+    .search-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #8899a6;
+    }
+
+    /* POST CARD */
     .post-card {
-      background-color: rgba(30, 30, 30, 0.95);
-      border: 1px solid #333333;
-      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .post-header {
+    .post-meta {
       font-size: 0.8rem;
-      color: #888888;
+      color: #8899a6;
       display: flex;
       justify-content: space-between;
     }
 
     .post-title {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: #ffffff;
       font-weight: bold;
     }
 
-    .post-body {
-      font-size: 0.9rem;
-      color: #cccccc;
+    .post-text {
+      font-size: 0.95rem;
+      color: #d0d0d0;
       white-space: pre-wrap;
+      line-height: 1.4;
     }
 
-    .post-actions {
+    .post-media {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-top: 8px;
+      max-height: 350px;
+      object-fit: contain;
+    }
+
+    .post-footer {
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 12px;
+      margin-top: 8px;
       padding-top: 10px;
-      border-top: 1px solid #2a2a2a;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .btn-action {
-      background-color: #252525;
-      color: #bbbbbb;
-      border: 1px solid #3a3a3a;
-      padding: 5px 12px;
-      font-size: 0.8rem;
+    .action-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #b0c4de;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    .btn-action:hover {
-      background-color: #333333;
-      color: #ffffff;
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
     }
 
     .btn-report {
-      color: #ff6b6b;
+      color: #e74c3c;
     }
 
     .btn-delete {
-      background-color: #5a1a1a;
-      border-color: #ff4444;
-      color: #ff4444;
+      background: rgba(231, 76, 60, 0.2);
+      border-color: rgba(231, 76, 60, 0.4);
+      color: #e74c3c;
+    }
+
+    /* MODALE ADMIN MAIL (PANNELLO SEGNALAZIONI) */
+    #admin-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #18202d;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
     }
   </style>
 
-  <!-- FIREBASE & ADMIN LOGIC -->
+  <!-- FIREBASE LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -210,41 +291,48 @@
     const ADMIN_NICKNAME = "Fronte ★";
 
     document.addEventListener("DOMContentLoaded", () => {
-      const userStatusEl = document.getElementById("user-status");
+      const mailBtn = document.getElementById("mail-btn");
       const postForm = document.getElementById("post-form");
       const postsFeed = document.getElementById("posts-feed");
-      const adminPanel = document.getElementById("admin-panel");
+      const mediaInputGroup = document.getElementById("media-input-group");
+      const adminModal = document.getElementById("admin-modal");
       const reportsList = document.getElementById("reports-list");
+      const closeModal = document.getElementById("close-modal");
+      const searchInput = document.getElementById("search-input");
+
+      let allPosts = [];
 
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           const nickname = user.displayName || "Utente";
-          userStatusEl.textContent = `Logged as: ${nickname}`;
-
           if (nickname === ADMIN_NICKNAME) {
-            adminPanel.style.display = "block";
-            loadReports();
-          } else {
-            adminPanel.style.display = "none";
+            mailBtn.style.display = "block";
+            if(mediaInputGroup) mediaInputGroup.style.display = "block";
+            loadReportsCount();
           }
-        } else {
-          userStatusEl.innerHTML = `<a href="account.html" style="color: #ff6b6b;">Accedi per postare</a>`;
-          adminPanel.style.display = "none";
         }
       });
 
-      // Pubblicazione post
+      // Apri/Chiudi modale Mail Admin
+      mailBtn.addEventListener("click", () => {
+        adminModal.style.display = "flex";
+        loadReports();
+      });
+      closeModal.addEventListener("click", () => adminModal.style.display = "none");
+
+      // Pubblica Post
       postForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const user = auth.currentUser;
         if (!user) {
-          alert("Devi effettuare l'accesso!");
+          alert("Devi effettuare l'accesso per postare!");
           window.location.href = "account.html";
           return;
         }
 
         const title = document.getElementById("post-title-input").value.trim();
         const body = document.getElementById("post-body-input").value.trim();
+        const mediaUrl = document.getElementById("post-media-input") ? document.getElementById("post-media-input").value.trim() : "";
         const nickname = user.displayName || "Anonym";
 
         if (!title || !body) return;
@@ -253,120 +341,161 @@
           await addDoc(collection(db, "posts"), {
             title,
             body,
+            mediaUrl: nickname === ADMIN_NICKNAME ? mediaUrl : "",
             author: nickname,
             likes: 0,
             createdAt: serverTimestamp()
           });
 
-          document.getElementById("post-title-input").value = "";
-          document.getElementById("post-body-input").value = "";
+          postForm.reset();
           loadPosts();
         } catch (error) {
-          console.error("Errore invio post:", error);
+          console.error("Errore pubblicazione:", error);
         }
       });
 
-      // Caricamento dei post
+      // Carica Post da Firestore
       async function loadPosts() {
-        postsFeed.innerHTML = "<p style='color: #888;'>Caricamento post...</p>";
+        postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>Caricamento post...</p>";
         try {
           const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
           const querySnapshot = await getDocs(q);
           
-          postsFeed.innerHTML = "";
-          if (querySnapshot.empty) {
-            postsFeed.innerHTML = "<p style='color: #888;'>Nessun post nella community.</p>";
-            return;
+          allPosts = [];
+          querySnapshot.forEach((docSnap) => {
+            allPosts.push({ id: docSnap.id, ...docSnap.data() });
+          });
+
+          renderPosts(allPosts);
+        } catch (err) {
+          console.error("Errore caricamento:", err);
+          postsFeed.innerHTML = "<p style='color: #e74c3c; text-align:center;'>Errore nel caricamento dei post.</p>";
+        }
+      }
+
+      function renderPosts(postsToRender) {
+        postsFeed.innerHTML = "";
+        if (postsToRender.length === 0) {
+          postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>Nessun post trovato.</p>";
+          return;
+        }
+
+        const currentUser = auth.currentUser;
+        const isUserAdmin = currentUser && currentUser.displayName === ADMIN_NICKNAME;
+
+        postsToRender.forEach((post) => {
+          const card = document.createElement("article");
+          card.className = "post-card";
+          
+          let mediaHTML = "";
+          if (post.mediaUrl) {
+            if (post.mediaUrl.endsWith(".mp4") || post.mediaUrl.includes("video")) {
+              mediaHTML = `<video src="${post.mediaUrl}" controls class="post-media"></video>`;
+            } else {
+              mediaHTML = `<img src="${post.mediaUrl}" alt="Media" class="post-media" />`;
+            }
           }
 
-          const currentUser = auth.currentUser;
-          const isUserAdmin = currentUser && currentUser.displayName === ADMIN_NICKNAME;
+          card.innerHTML = `
+            <div class="post-meta">
+              <span>u/${escapeHtml(post.author || "Anonym")}</span>
+            </div>
+            <h3 class="post-title">${escapeHtml(post.title)}</h3>
+            <p class="post-text">${escapeHtml(post.body)}</p>
+            ${mediaHTML}
+            <div class="post-footer">
+              <button class="action-btn like-btn" data-id="${post.id}">▲ ${post.likes || 0}</button>
+              <button class="action-btn btn-report report-btn" data-id="${post.id}">Report</button>
+              ${isUserAdmin ? `<button class="action-btn btn-delete delete-btn" data-id="${post.id}">Elimina</button>` : ""}
+            </div>
+          `;
 
-          querySnapshot.forEach((documentSnapshot) => {
-            const post = documentSnapshot.data();
-            const postId = documentSnapshot.id;
+          // Evento Like
+          card.querySelector(".like-btn").addEventListener("click", async () => {
+            await updateDoc(doc(db, "posts", post.id), { likes: increment(1) });
+            loadPosts();
+          });
 
-            const card = document.createElement("article");
-            card.className = "post-card";
-            card.innerHTML = `
-              <div class="post-header">
-                <span>Posted by u/${post.author || "Anonym"}</span>
-              </div>
-              <h3 class="post-title">${escapeHtml(post.title)}</h3>
-              <p class="post-body">${escapeHtml(post.body)}</p>
-              <div class="post-actions">
-                <button class="btn-action like-btn" data-id="${postId}">▲ ${post.likes || 0} Likes</button>
-                <button class="btn-action btn-report report-btn" data-id="${postId}">Report</button>
-                ${isUserAdmin ? `<button class="btn-action btn-delete delete-btn" data-id="${postId}">Elimina (Admin)</button>` : ""}
-              </div>
-            `;
-
-            card.querySelector(".like-btn").addEventListener("click", async () => {
-              await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
-              loadPosts();
+          // Evento Report
+          card.querySelector(".report-btn").addEventListener("click", async () => {
+            await addDoc(collection(db, "reports"), {
+              postId: post.id,
+              postTitle: post.title,
+              author: post.author,
+              reportedAt: serverTimestamp()
             });
+            alert("Post segnalato a Fronte ★.");
+            loadReportsCount();
+          });
 
-            card.querySelector(".report-btn").addEventListener("click", async () => {
-              try {
-                await addDoc(collection(db, "reports"), {
-                  postId: postId,
-                  postTitle: post.title,
-                  author: post.author,
-                  reportedAt: serverTimestamp()
-                });
-                alert("Post segnalato con successo a Fronte ★.");
-              } catch (err) {
-                console.error("Errore report:", err);
+          // Evento Delete (Admin)
+          if (isUserAdmin) {
+            card.querySelector(".delete-btn").addEventListener("click", async () => {
+              if (confirm("Vuoi eliminare questo post?")) {
+                await deleteDoc(doc(db, "posts", post.id));
+                loadPosts();
+                loadReportsCount();
               }
             });
+          }
 
-            if (isUserAdmin) {
-              card.querySelector(".delete-btn").addEventListener("click", async () => {
-                if (confirm("Vuoi eliminare questo post?")) {
-                  await deleteDoc(doc(db, "posts", postId));
-                  loadPosts();
-                  loadReports();
-                }
-              });
-            }
+          postsFeed.appendChild(card);
+        });
+      }
 
-            postsFeed.appendChild(card);
-          });
-        } catch (err) {
-          console.error("Errore caricamento feed:", err);
-        }
+      // Ricerca in tempo reale
+      searchInput.addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allPosts.filter(p => 
+          p.title.toLowerCase().includes(term) || p.body.toLowerCase().includes(term)
+        );
+        renderPosts(filtered);
+      });
+
+      async function loadReportsCount() {
+        try {
+          const snapshot = await getDocs(collection(db, "reports"));
+          mailBtn.textContent = `✉ Mail (${snapshot.size})`;
+        } catch(e) {}
       }
 
       async function loadReports() {
         try {
           const q = query(collection(db, "reports"), orderBy("reportedAt", "desc"));
-          const querySnapshot = await getDocs(q);
+          const snapshot = await getDocs(q);
           reportsList.innerHTML = "";
 
-          if (querySnapshot.empty) {
-            reportsList.innerHTML = "<p style='color: #888; font-size: 0.85rem;'>Nessuna segnalazione ricevuta.</p>";
+          if (snapshot.empty) {
+            reportsList.innerHTML = "<p style='color: #8899a6; font-size: 0.9rem;'>Nessuna segnalazione ricevuta.</p>";
             return;
           }
 
-          querySnapshot.forEach((docSnap) => {
+          snapshot.forEach((docSnap) => {
             const rep = docSnap.data();
             const div = document.createElement("div");
-            div.style.cssText = "background: #181818; border: 1px solid #444; padding: 10px; margin-bottom: 8px; font-size: 0.85rem;";
+            div.style.cssText = "background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.9rem;";
             div.innerHTML = `
-              <strong>Post:</strong> "${escapeHtml(rep.postTitle || 'Senza titolo')}" <br>
-              <strong>Autore:</strong> u/${rep.author} <br>
-              <button class="btn-action btn-delete" style="margin-top: 6px;" onclick="window.deleteReport('${docSnap.id}')">Rimuovi Segnalazione</button>
+              <strong>Post:</strong> "${escapeHtml(rep.postTitle)}" <br>
+              <strong>Autore:</strong> u/${escapeHtml(rep.author)} <br>
+              <button class="action-btn btn-delete" style="margin-top: 8px;" onclick="window.resolveReport('${docSnap.id}', '${rep.postId}')">Elimina Post & Rimuovi</button>
             `;
             reportsList.appendChild(div);
           });
         } catch (err) {
-          console.error("Errore caricamento report:", err);
+          console.error("Errore report:", err);
         }
       }
 
-      window.deleteReport = async function(reportId) {
-        await deleteDoc(doc(db, "reports", reportId));
-        loadReports();
+      window.resolveReport = async function(reportId, postId) {
+        if(confirm("Vuoi eliminare il post segnalato e chiudere la segnalazione?")) {
+          try {
+            await deleteDoc(doc(db, "posts", postId));
+          } catch(e) {}
+          await deleteDoc(doc(db, "reports", reportId));
+          loadReports();
+          loadPosts();
+          loadReportsCount();
+        }
       };
 
       function escapeHtml(text) {
@@ -379,41 +508,54 @@
 </head>
 <body>
 
-  <div class="top-bar">
-    <a href="index.html" class="btn-back">← Home</a>
-    <span id="user-status" class="user-status">Verifica accesso...</span>
-  </div>
-
   <div class="main-container">
 
-    <!-- PANNELLO DI CONTROLLO RISERVATO A FRONTE ★ -->
-    <section id="admin-panel" class="admin-panel" style="display: none;">
-      <h2>Pannello di Controllo (Fronte ★)</h2>
-      <p style="font-size: 0.85rem; color: #ffaa00; margin-bottom: 12px;">Sei loggato come Admin. Qui vedi le segnalazioni (Report) dei post:</p>
-      <div id="reports-list">
-        <p style="color: #888; font-size: 0.85rem;">Caricamento segnalazioni...</p>
-      </div>
-    </section>
+    <!-- HEADER STYLE SCREENSHOT -->
+    <header class="header-box">
+      <button id="mail-btn" class="mail-btn">✉ Mail (0)</button>
+      <h1>Minecraft Community</h1>
+      <p>Condividi idee, costruzioni e commenti con gli altri gamer.</p>
+      <a href="index.html" class="btn-gold">← Visita l'Era Dell'Oro</a>
+    </header>
 
     <!-- BOX CREAZIONE POST -->
-    <section class="post-creator-box">
-      <h2>Crea un nuovo post</h2>
+    <section class="creator-box">
       <form id="post-form">
-        <div class="form-group">
-          <input type="text" id="post-title-input" placeholder="Titolo del post..." required />
+        <input type="text" id="post-title-input" class="form-input" placeholder="Titolo del post..." required />
+        <textarea id="post-body-input" class="form-input" placeholder="Scrivi il tuo messaggio..." required></textarea>
+        
+        <!-- Campo immagine/video visibile solo a Fronte ★ -->
+        <div id="media-input-group" style="display: none;">
+          <input type="text" id="post-media-input" class="form-input" placeholder="URL Immagine o Video .mp4 (Solo per Fronte ★)" />
         </div>
-        <div class="form-group">
-          <textarea id="post-body-input" placeholder="Scrivi il corpo del post..." required></textarea>
-        </div>
-        <button type="submit" class="btn-publish">Pubblica</button>
+
+        <button type="submit" class="btn-publish">Pubblica Post</button>
       </form>
     </section>
 
+    <!-- BARRA DI RICERCA -->
+    <section class="search-box">
+      <input type="text" id="search-input" class="search-input" placeholder="🔍 Cerca nei post..." />
+    </section>
+
     <!-- FEED DEI POST -->
-    <section class="feed-container" id="posts-feed">
+    <section class="main-container" id="posts-feed" style="gap: 16px;">
       <!-- I post caricati da Firebase appariranno qui -->
     </section>
 
+  </div>
+
+  <!-- MODALE MAIL ADMIN -->
+  <div id="admin-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color: #fff; font-size: 1.1rem;">Segnalazioni Ricevute (Mail)</h3>
+        <button id="close-modal" class="close-modal">&times;</button>
+      </div>
+      <div id="reports-list">
+        <p style="color: #8899a6; font-size: 0.9rem;">Caricamento...</p>
+      </div>
+    </div>
   </div>
 
 </body>
