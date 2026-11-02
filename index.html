@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StoneFiles — The Alpha & Beta Minecraft Hub</title>
+  <meta name="description" content="Discover and share posts, seeds, legacy mods, and memories from Minecraft's Alpha and Beta versions." />
+  
+  <style>
+    /* RESET & VARS */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0px !important; /* Forza lo stile quadrato retro */
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a1b; /* Sfondo scuro stile Reddit */
+      color: #d7dadc;
+      line-height: 1.5;
+    }
+
+    /* HEADER */
+    header {
+      background-color: #272729;
+      border-bottom: 2px solid #343536;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background-color: #737373; /* Colore blocco pietra */
+      border: 2px solid #4a4a4a;
+    }
+
+    .brand h1 {
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .btn-create {
+      background-color: #555555;
+      color: #fff;
+      border: 1px solid #777;
+      padding: 6px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-create:hover {
+      background-color: #666666;
+    }
+
+    /* CONTAINER PRINCIPALE */
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 20px;
+    }
+
+    /* FEED POST */
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .post {
+      background-color: #272729;
+      border: 1px solid #343536;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .post:hover {
+      border-color: #898989;
+    }
+
+    /* VOTI (SINISTRA) */
+    .votes {
+      width: 40px;
+      background-color: #1e1e1f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0;
+      gap: 4px;
+    }
+
+    .vote-btn {
+      background: none;
+      border: none;
+      color: #818384;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .vote-btn:hover {
+      color: #d7dadc;
+    }
+
+    .score {
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    /* CONTENUTO POST */
+    .post-content {
+      padding: 12px;
+      flex: 1;
+    }
+
+    .post-meta {
+      font-size: 0.75rem;
+      color: #818384;
+      margin-bottom: 6px;
+    }
+
+    .post-meta span {
+      color: #4a90e2; /* Colore tag categoria */
+      font-weight: bold;
+    }
+
+    .post-title {
+      font-size: 1rem;
+      color: #ffffff;
+      margin-bottom: 8px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .post-footer {
+      font-size: 0.75rem;
+      color: #818384;
+      display: flex;
+      gap: 12px;
+    }
+
+    /* SIDEBAR (DESTRA) */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .widget {
+      background-color: #272729;
+      border: 1px solid #343536;
+      padding: 14px;
+    }
+
+    .widget h3 {
+      font-size: 0.9rem;
+      color: #818384;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .widget p {
+      font-size: 0.85rem;
+      color: #b3b3b3;
+    }
+
+    /* RESPONSIVE PER MOBILI */
+    @media (max-width: 640px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DI NAVIGAZIONE -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon"></div>
+      <h1>StoneFiles</h1>
+    </div>
+    <button class="btn-create">+ New Post</button>
+  </header>
+
+  <!-- CONTENUTO PRINCIPALE -->
+  <div class="container">
+    
+    <!-- FEED DEI POST -->
+    <main class="feed">
+
+      <!-- POST 1 (Esempio) -->
+      <article class="post">
+        <div class="votes">
+          <button class="vote-btn">▲</button>
+          <span class="score">128</span>
+          <button class="vote-btn">▼</button>
+        </div>
+        <div class="post-content">
+          <div class="post-meta">
+            Posted in <span>c/beta-1-7-3</span> by u/HerobrineHunter • 2 hours ago
+          </div>
+          <a href="#" class="post-title">Found an incredible Monolith terrain generation in Beta 1.7.3! (Seed inside)</a>
+          <div class="post-footer">
+            <span>💬 34 Comments</span>
+            <span>🔗 Share</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- POST 2 (Esempio) -->
+      <article class="post">
+        <div class="votes">
+          <button class="vote-btn">▲</button>
+          <span class="score">64</span>
+          <button class="vote-btn">▼</button>
+        </div>
+        <div class="post-content">
+          <div class="post-meta">
+            Posted in <span>c/retro-mods</span> by u/AetherFan99 • 5 hours ago
+          </div>
+          <a href="#" class="post-title">How to properly install ModLoader and Aether v1.0 on a clean jar</a>
+          <div class="post-footer">
+            <span>💬 12 Comments</span>
+            <span>🔗 Share</span>
+          </div>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- SIDEBAR INFORMAZIONI -->
+    <aside class="sidebar">
+      <div class="widget">
+        <h3>About StoneFiles</h3>
+        <p>The community board and archive dedicated to Minecraft's Alpha and Beta eras. Preserving block history since day one.</p>
+      </div>
+    </aside>
+
+  </div>
+
+</body>
+</html>
