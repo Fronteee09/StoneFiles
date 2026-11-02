@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -36,7 +36,7 @@
       align-items: center;
     }
 
-    .btn-back, .btn-admin {
+    .btn-back {
       background-color: #1e1e1e;
       color: #ffffff;
       border: 1px solid #444444;
@@ -48,13 +48,8 @@
       display: inline-block;
     }
 
-    .btn-back:hover, .btn-admin:hover {
+    .btn-back:hover {
       background-color: #2e2e2e;
-    }
-
-    .btn-admin {
-      border-color: #ffaa00;
-      color: #ffaa00;
     }
 
     .user-status {
@@ -104,6 +99,11 @@
       min-height: 80px;
     }
 
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #777777;
+    }
+
     .btn-publish {
       background-color: #3a3a3a;
       color: #ffffff;
@@ -112,6 +112,7 @@
       font-size: 0.9rem;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
     .btn-publish:hover {
@@ -206,7 +207,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const ADMIN_NICKNAME = "Fronte ★"; // Nome esatto dell'admin
+    const ADMIN_NICKNAME = "Fronte ★";
 
     document.addEventListener("DOMContentLoaded", () => {
       const userStatusEl = document.getElementById("user-status");
@@ -220,7 +221,6 @@
           const nickname = user.displayName || "Utente";
           userStatusEl.textContent = `Logged as: ${nickname}`;
 
-          // Controlla se l'utente loggato è Fronte ★
           if (nickname === ADMIN_NICKNAME) {
             adminPanel.style.display = "block";
             loadReports();
@@ -301,13 +301,11 @@
               </div>
             `;
 
-            // Tasto Like
             card.querySelector(".like-btn").addEventListener("click", async () => {
               await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
               loadPosts();
             });
 
-            // Tasto Report -> Invia la segnalazione visibile solo a Fronte ★
             card.querySelector(".report-btn").addEventListener("click", async () => {
               try {
                 await addDoc(collection(db, "reports"), {
@@ -322,7 +320,6 @@
               }
             });
 
-            // Tasto Elimina (Solo per Fronte ★)
             if (isUserAdmin) {
               card.querySelector(".delete-btn").addEventListener("click", async () => {
                 if (confirm("Vuoi eliminare questo post?")) {
@@ -340,7 +337,6 @@
         }
       }
 
-      // Carica i report nel pannello privato di Fronte ★
       async function loadReports() {
         try {
           const q = query(collection(db, "reports"), orderBy("reportedAt", "desc"));
@@ -368,7 +364,6 @@
         }
       }
 
-      // Funzione globale per rimuovere il report dal pannello admin
       window.deleteReport = async function(reportId) {
         await deleteDoc(doc(db, "reports", reportId));
         loadReports();
@@ -422,4 +417,4 @@
   </div>
 
 </body>
-</html> 
+</html>
