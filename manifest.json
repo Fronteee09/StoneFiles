@@ -1,0 +1,22 @@
+{
+  "name": "StoneFiles — Minecraft Alpha & Beta Hub",
+  "short_name": "StoneFiles",
+  "description": "Retro Minecraft Alpha & Beta community and archive.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#18202d",
+  "theme_color": "#18202d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "stonefilelogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "stonefilelogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
