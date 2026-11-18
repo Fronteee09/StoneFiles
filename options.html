@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StoneFiles — Options</title>
+  <link rel="icon" type="image/png" href="stonefilelogo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#18202d">
+
+  <style>
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('Minecraft.ttf') format('truetype');
+    }
+
+    :root {
+      --site-font: 'Minecraft', monospace, sans-serif;
+      --site-bg: url('sfondoindex.png');
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0px !important;
+      font-family: var(--site-font);
+    }
+
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), var(--site-bg);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+    }
+
+    .options-container {
+      background-color: rgba(24, 24, 24, 0.94);
+      border: 2px solid #3a3a3a;
+      max-width: 600px;
+      width: 100%;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .page-title {
+      font-size: 1.6rem;
+      color: #ffffff;
+      margin-bottom: 24px;
+      text-shadow: 2px 2px 0px #000000;
+    }
+
+    .section-label {
+      font-size: 0.95rem;
+      color: #aaaaaa;
+      text-align: left;
+      margin-bottom: 10px;
+      margin-top: 18px;
+    }
+
+    /* BOTTONI STILE MINECRAFT */
+    .mc-btn {
+      display: block;
+      width: 100%;
+      background-color: #363636;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      border-top: 2px solid #5a5a5a;
+      border-left: 2px solid #5a5a5a;
+      border-right: 2px solid #1e1e1e;
+      border-bottom: 2px solid #1e1e1e;
+      text-shadow: 2px 2px 0px #1a1a1a;
+      cursor: pointer;
+    }
+
+    .mc-btn:hover {
+      background-color: #4a5a75;
+      border-top-color: #7c92b8;
+      border-left-color: #7c92b8;
+      color: #ffffa0;
+    }
+
+    /* GRIGLIA SFONDI */
+    .bg-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .bg-option {
+      background-color: #262626;
+      border: 2px solid #444444;
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bg-option:hover {
+      border-color: #888888;
+      background-color: #323232;
+    }
+
+    .bg-option.active {
+      border-color: #ffff55;
+      background-color: #3a3a28;
+    }
+
+    .bg-preview {
+      width: 100%;
+      height: 60px;
+      object-fit: cover;
+      border: 1px solid #111;
+    }
+
+    .bg-name {
+      font-size: 0.85rem;
+      color: #ffffff;
+    }
+
+    .bg-option.active .bg-name {
+      color: #ffff55;
+    }
+
+    .done-btn {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="options-container">
+    <h1 class="page-title">Options</h1>
+
+    <!-- SCELTA FONT -->
+    <p class="section-label">Font Style:</p>
+    <button id="toggle-font-btn" class="mc-btn">Font: Minecraft</button>
+
+    <!-- SCELTA SFONDO -->
+    <p class="section-label">Background Panorama:</p>
+    <div class="bg-grid" id="bg-grid">
+      <div class="bg-option" data-bg="titlescreen.png">
+        <img src="titlescreen.png" alt="Title Screen" class="bg-preview">
+        <span class="bg-name">Title Screen</span>
+      </div>
+      <div class="bg-option" data-bg="herobrine.png">
+        <img src="herobrine.png" alt="Herobrine" class="bg-preview">
+        <span class="bg-name">Herobrine</span>
+      </div>
+      <div class="bg-option" data-bg="wood.png">
+        <img src="wood.png" alt="Wood" class="bg-preview">
+        <span class="bg-name">Wood</span>
+      </div>
+      <div class="bg-option" data-bg="desert.png">
+        <img src="desert.png" alt="Desert" class="bg-preview">
+        <span class="bg-name">Desert</span>
+      </div>
+      <div class="bg-option" data-bg="village.png">
+        <img src="village.png" alt="Village" class="bg-preview">
+        <span class="bg-name">Village</span>
+      </div>
+      <div class="bg-option" data-bg="cave.png">
+        <img src="cave.png" alt="Cave" class="bg-preview">
+        <span class="bg-name">Cave</span>
+      </div>
+    </div>
+
+    <!-- TORNA INDIETRO -->
+    <a href="index.html" class="mc-btn done-btn">Done</a>
+  </main>
+
+  <script>
+    const fontBtn = document.getElementById('toggle-font-btn');
+    const bgOptions = document.querySelectorAll('.bg-option');
+
+    // Carica impostazioni salvate (o default)
+    let currentFont = localStorage.getItem('sf_font') || 'Minecraft';
+    let currentBg = localStorage.getItem('sf_bg') || 'titlescreen.png';
+
+    function applySettings() {
+      // Applica Font
+      if (currentFont === 'Arial') {
+        document.documentElement.style.setProperty('--site-font', 'Arial, Helvetica, sans-serif');
+        fontBtn.textContent = 'Font: Arial';
+      } else {
+        document.documentElement.style.setProperty('--site-font', "'Minecraft', monospace, sans-serif");
+        fontBtn.textContent = 'Font: Minecraft';
+      }
+
+      // Applica Sfondo
+      document.documentElement.style.setProperty('--site-bg', `url('${currentBg}')`);
+
+      // Aggiorna bordo giallo sull'opzione selezionata
+      bgOptions.forEach(opt => {
+        if (opt.dataset.bg === currentBg) {
+          opt.classList.add('active');
+        } else {
+          opt.classList.remove('active');
+        }
+      });
+    }
+
+    // Cambio Font al click
+    fontBtn.addEventListener('click', () => {
+      currentFont = (currentFont === 'Minecraft') ? 'Arial' : 'Minecraft';
+      localStorage.setItem('sf_font', currentFont);
+      applySettings();
+    });
+
+    // Cambio Sfondo al click
+    bgOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        currentBg = opt.dataset.bg;
+        localStorage.setItem('sf_bg', currentBg);
+        applySettings();
+      });
+    });
+
+    // Inizializza al caricamento pagina
+    applySettings();
+  </script>
+
+</body>
+</html>
