@@ -317,6 +317,7 @@
     const db = getFirestore(app);
 
     const ADMIN_NICKNAME = "Fronte ★";
+    const ADMIN_UID = "rgXLYIPZcgTYqJWYmz6y4bmZCdJ3";
 
     document.addEventListener("DOMContentLoaded", () => {
       const mailBtn = document.getElementById("mail-btn");
@@ -333,7 +334,8 @@
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           const nickname = user.displayName || "User";
-          if (nickname === ADMIN_NICKNAME) {
+          // Controllo permessi tramite Nickname oppure UID specifico
+          if (nickname === ADMIN_NICKNAME || user.uid === ADMIN_UID) {
             mailBtn.style.display = "block";
             if (mediaInputGroup) mediaInputGroup.style.display = "block";
             loadReportsCount();
@@ -359,8 +361,10 @@
 
         const title = document.getElementById("post-title-input").value.trim();
         const body = document.getElementById("post-body-input").value.trim();
-        const mediaUrl = document.getElementById("post-media-input") ? document.getElementById("post-media-input").value.trim() : "";
+        const mediaInputEl = document.getElementById("post-media-input");
+        const mediaUrl = mediaInputEl ? mediaInputEl.value.trim() : "";
         const nickname = user.displayName || "Anonym";
+        const isMod = (nickname === ADMIN_NICKNAME || user.uid === ADMIN_UID);
 
         if (!title || !body) return;
 
@@ -368,7 +372,7 @@
           await addDoc(collection(db, "posts"), {
             title,
             body,
-            mediaUrl: nickname === ADMIN_NICKNAME ? mediaUrl : "",
+            mediaUrl: isMod ? mediaUrl : "",
             author: nickname,
             likes: 0,
             createdAt: serverTimestamp()
@@ -408,7 +412,7 @@
         }
 
         const currentUser = auth.currentUser;
-        const isUserAdmin = currentUser && currentUser.displayName === ADMIN_NICKNAME;
+        const isUserMod = currentUser && (currentUser.displayName === ADMIN_NICKNAME || currentUser.uid === ADMIN_UID);
 
         postsToRender.forEach((post) => {
           const card = document.createElement("article");
@@ -433,7 +437,7 @@
             <div class="post-footer">
               <button class="action-btn like-btn" data-id="${post.id}">▲ ${post.likes || 0}</button>
               <button class="action-btn report-btn" data-id="${post.id}">Report</button>
-              ${isUserAdmin ? `<button class="action-btn btn-delete delete-btn" data-id="${post.id}">Delete</button>` : ""}
+              ${isUserMod ? `<button class="action-btn btn-delete delete-btn" data-id="${post.id}">Delete</button>` : ""}
             </div>
           `;
 
@@ -449,11 +453,11 @@
               author: post.author,
               reportedAt: serverTimestamp()
             });
-            alert("Post reported to Fronte ★.");
+            alert("Post reported to moderators.");
             loadReportsCount();
           });
 
-          if (isUserAdmin) {
+          if (isUserMod) {
             card.querySelector(".delete-btn").addEventListener("click", async () => {
               if (confirm("Do you want to delete this post?")) {
                 await deleteDoc(doc(db, "posts", post.id));
@@ -546,7 +550,7 @@
         <textarea id="post-body-input" class="form-input" placeholder="Write your message..." required></textarea>
         
         <div id="media-input-group" style="display: none;">
-          <input type="text" id="post-media-input" class="form-input" placeholder="Image or .mp4 Video URL (Fronte ★ only)" />
+          <input type="text" id="post-media-input" class="form-input" placeholder="Image or .mp4 Video URL (Moderators only)" />
         </div>
 
         <button type="submit" class="mc-btn">Publish Post</button>
