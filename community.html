@@ -5,17 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StoneFiles — Community</title>
   <link rel="icon" type="image/png" href="stonefilelogo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#18202d">
   <script type="module" src="theme.js"></script>
+  
   <style>
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('Minecraft.ttf') format('truetype');
+    }
+
+    /* STILE SQUADRATO MINECRAFT-STYLE */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      border-radius: 0px !important;
+      font-family: 'Minecraft', monospace, sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('sfondoindex.png');
+      background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('sfondoindex.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -34,13 +44,15 @@
       width: 100%;
     }
 
-    /* TUTTI I BOX CONDIVIDONO LA STESSA LARGHEZZA AL 100% */
+    /* TUTTI I BOX CONDIVIDONO LA STESSA LARGHEZZA E BORDI SQUADRATI */
     .header-box, .creator-box, .search-box, .post-card {
-      background: rgba(24, 32, 45, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
+      background-color: rgba(24, 24, 24, 0.94);
+      border-top: 2px solid #5a5a5a;
+      border-left: 2px solid #5a5a5a;
+      border-right: 2px solid #1e1e1e;
+      border-bottom: 2px solid #1e1e1e;
       padding: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
       width: 100%;
     }
 
@@ -52,71 +64,90 @@
 
     .mail-btn {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      background: linear-gradient(to bottom, #ffaa00, #e69500);
-      color: #111;
-      border: none;
-      padding: 6px 14px;
+      top: 16px;
+      right: 16px;
+      background-color: #363636;
+      color: #ffaa00;
+      border-top: 2px solid #5a5a5a;
+      border-left: 2px solid #5a5a5a;
+      border-right: 2px solid #1e1e1e;
+      border-bottom: 2px solid #1e1e1e;
+      padding: 6px 12px;
       font-weight: bold;
       font-size: 0.85rem;
-      border-radius: 6px;
+      text-shadow: 2px 2px 0px #1a1a1a;
       cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
       display: none;
     }
 
     .mail-btn:hover {
-      filter: brightness(1.1);
+      background-color: #4a5a75;
+      color: #ffffa0;
     }
 
     .header-box h1 {
-      font-size: 2rem;
+      font-size: 1.9rem;
       color: #ffffff;
       margin-bottom: 8px;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
+      text-shadow: 3px 3px 0px #000000;
     }
 
     .header-box p {
       font-size: 0.9rem;
-      color: #b0c4de;
-      margin-bottom: 16px;
+      color: #aaaaaa;
+      margin-bottom: 18px;
     }
 
-    .btn-gold {
-      background: linear-gradient(to bottom, #f39c12, #d35400);
+    /* BOTTONI IN STILE MENU MINECRAFT */
+    .mc-btn {
+      background-color: #363636;
       color: #ffffff;
-      border: none;
-      padding: 8px 20px;
-      font-size: 0.85rem;
+      border-top: 2px solid #5a5a5a;
+      border-left: 2px solid #5a5a5a;
+      border-right: 2px solid #1e1e1e;
+      border-bottom: 2px solid #1e1e1e;
+      padding: 10px 20px;
+      font-size: 0.9rem;
       font-weight: bold;
-      border-radius: 6px;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      text-shadow: 2px 2px 0px #1a1a1a;
     }
 
-    .btn-gold:hover {
-      filter: brightness(1.1);
+    .mc-btn:hover {
+      background-color: #4a5a75;
+      border-top-color: #7c92b8;
+      border-left-color: #7c92b8;
+      color: #ffffa0;
+    }
+
+    .mc-btn:active {
+      border-top: 2px solid #1e1e1e;
+      border-left: 2px solid #1e1e1e;
+      border-right: 2px solid #5a5a5a;
+      border-bottom: 2px solid #5a5a5a;
+    }
+
+    .btn-gold {
+      color: #ffaa00;
     }
 
     .form-input {
       width: 100%;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 6px;
+      background-color: #121212;
+      border: 2px solid #444444;
       color: #ffffff;
       padding: 12px;
       font-size: 0.95rem;
-      font-family: inherit;
       margin-bottom: 12px;
     }
 
     .form-input:focus {
       outline: none;
-      border-color: #3498db;
-      background: rgba(255, 255, 255, 0.1);
+      border-color: #888888;
+      background-color: #181818;
     }
 
     textarea.form-input {
@@ -124,24 +155,8 @@
       min-height: 90px;
     }
 
-    .btn-publish {
-      background: linear-gradient(to bottom, #3498db, #2980b9);
-      color: #ffffff;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      font-size: 0.9rem;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    .btn-publish:hover {
-      filter: brightness(1.1);
-    }
-
     .search-box {
-      padding: 12px 20px;
+      padding: 12px 16px;
     }
 
     .search-input {
@@ -154,7 +169,7 @@
     }
 
     .search-input::placeholder {
-      color: #8899a6;
+      color: #777777;
     }
 
     .post-card {
@@ -165,7 +180,7 @@
 
     .post-meta {
       font-size: 0.8rem;
-      color: #8899a6;
+      color: #888888;
       display: flex;
       justify-content: space-between;
     }
@@ -174,52 +189,64 @@
       font-size: 1.2rem;
       color: #ffffff;
       font-weight: bold;
+      text-shadow: 2px 2px 0px #000000;
       word-break: break-word;
     }
 
     .post-text {
       font-size: 0.95rem;
-      color: #d0d0d0;
+      color: #cccccc;
       white-space: pre-wrap;
-      line-height: 1.4;
+      line-height: 1.45;
       word-break: break-word;
     }
 
     .post-media {
       max-width: 100%;
-      border-radius: 6px;
       margin-top: 8px;
       max-height: 350px;
       object-fit: contain;
+      border: 2px solid #3a3a3a;
     }
 
     .post-footer {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       margin-top: 8px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 12px;
+      border-top: 2px solid #2e2e2e;
     }
 
     .action-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #b0c4de;
+      background-color: #2c2c2c;
+      border-top: 2px solid #4a4a4a;
+      border-left: 2px solid #4a4a4a;
+      border-right: 2px solid #181818;
+      border-bottom: 2px solid #181818;
+      color: #dddddd;
       padding: 6px 14px;
       font-size: 0.85rem;
-      border-radius: 6px;
+      text-shadow: 1px 1px 0px #000;
       cursor: pointer;
     }
 
     .action-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
+      background-color: #4a5a75;
+      color: #ffffa0;
     }
 
     .btn-delete {
-      background: rgba(231, 76, 60, 0.2);
-      border-color: rgba(231, 76, 60, 0.4);
-      color: #e74c3c;
+      background-color: #4a1a1a;
+      border-top-color: #7a2a2a;
+      border-left-color: #7a2a2a;
+      border-right-color: #2a0a0a;
+      border-bottom-color: #2a0a0a;
+      color: #ff6666;
+    }
+
+    .btn-delete:hover {
+      background-color: #6a2222;
+      color: #ffffff;
     }
 
     /* ADMIN MODAL */
@@ -227,20 +254,22 @@
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.85);
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
 
     .modal-content {
-      background: #18202d;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 8px;
+      background-color: #181818;
+      border-top: 2px solid #5a5a5a;
+      border-left: 2px solid #5a5a5a;
+      border-right: 2px solid #1e1e1e;
+      border-bottom: 2px solid #1e1e1e;
       width: 90%;
       max-width: 500px;
       padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
     }
 
     .modal-header {
@@ -248,22 +277,28 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 2px solid #333333;
       padding-bottom: 10px;
     }
 
     .close-modal {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 1.2rem;
+      background-color: #363636;
+      border: 2px solid #5a5a5a;
+      color: #ffffff;
+      font-size: 1.1rem;
+      padding: 2px 8px;
       cursor: pointer;
+    }
+
+    .close-modal:hover {
+      background-color: #4a5a75;
+      color: #ffffa0;
     }
   </style>
 
   <!-- FIREBASE LOGIC -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -277,7 +312,7 @@
       measurementId: "G-WEFNP7N7DG"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
@@ -300,10 +335,11 @@
           const nickname = user.displayName || "User";
           if (nickname === ADMIN_NICKNAME) {
             mailBtn.style.display = "block";
-            if(mediaInputGroup) mediaInputGroup.style.display = "block";
+            if (mediaInputGroup) mediaInputGroup.style.display = "block";
             loadReportsCount();
           }
         }
+        loadPosts();
       });
 
       mailBtn.addEventListener("click", () => {
@@ -342,11 +378,12 @@
           loadPosts();
         } catch (error) {
           console.error("Error publishing post:", error);
+          alert("Error publishing post.");
         }
       });
 
       async function loadPosts() {
-        postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>Loading posts...</p>";
+        postsFeed.innerHTML = "<p style='color: #888888; text-align:center;'>Loading posts...</p>";
         try {
           const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
           const querySnapshot = await getDocs(q);
@@ -359,14 +396,14 @@
           renderPosts(allPosts);
         } catch (err) {
           console.error("Error loading posts:", err);
-          postsFeed.innerHTML = "<p style='color: #e74c3c; text-align:center;'>Error loading posts.</p>";
+          postsFeed.innerHTML = "<p style='color: #ff5555; text-align:center;'>Error loading posts.</p>";
         }
       }
 
       function renderPosts(postsToRender) {
         postsFeed.innerHTML = "";
         if (postsToRender.length === 0) {
-          postsFeed.innerHTML = "<p style='color: #8899a6; text-align:center;'>No posts found.</p>";
+          postsFeed.innerHTML = "<p style='color: #888888; text-align:center;'>No posts found.</p>";
           return;
         }
 
@@ -395,7 +432,7 @@
             ${mediaHTML}
             <div class="post-footer">
               <button class="action-btn like-btn" data-id="${post.id}">▲ ${post.likes || 0}</button>
-              <button class="action-btn btn-report report-btn" data-id="${post.id}">Report</button>
+              <button class="action-btn report-btn" data-id="${post.id}">Report</button>
               ${isUserAdmin ? `<button class="action-btn btn-delete delete-btn" data-id="${post.id}">Delete</button>` : ""}
             </div>
           `;
@@ -452,14 +489,14 @@
           reportsList.innerHTML = "";
 
           if (snapshot.empty) {
-            reportsList.innerHTML = "<p style='color: #8899a6; font-size: 0.9rem;'>No reports received.</p>";
+            reportsList.innerHTML = "<p style='color: #888888; font-size: 0.9rem;'>No reports received.</p>";
             return;
           }
 
           snapshot.forEach((docSnap) => {
             const rep = docSnap.data();
             const div = document.createElement("div");
-            div.style.cssText = "background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.9rem;";
+            div.style.cssText = "background: #121212; border: 2px solid #3a3a3a; padding: 12px; margin-bottom: 10px; font-size: 0.85rem;";
             div.innerHTML = `
               <strong>Post:</strong> "${escapeHtml(rep.postTitle)}" <br>
               <strong>Author:</strong> u/${escapeHtml(rep.author)} <br>
@@ -473,7 +510,7 @@
       }
 
       window.resolveReport = async function(reportId, postId) {
-        if(confirm("Do you want to delete the reported post and clear this report?")) {
+        if (confirm("Do you want to delete the reported post and clear this report?")) {
           try {
             await deleteDoc(doc(db, "posts", postId));
           } catch(e) {}
@@ -487,8 +524,6 @@
       function escapeHtml(text) {
         return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "";
       }
-
-      loadPosts();
     });
   </script>
 </head>
@@ -501,7 +536,7 @@
       <button id="mail-btn" class="mail-btn">✉ Mail (0)</button>
       <h1>Minecraft Community</h1>
       <p>Share ideas, builds, and comments with other gamers.</p>
-      <a href="index.html" class="btn-gold">← Visit the Golden Era</a>
+      <a href="index.html" class="mc-btn btn-gold">← Visit the Golden Era</a>
     </header>
 
     <!-- POST CREATOR -->
@@ -514,13 +549,13 @@
           <input type="text" id="post-media-input" class="form-input" placeholder="Image or .mp4 Video URL (Fronte ★ only)" />
         </div>
 
-        <button type="submit" class="btn-publish">Publish Post</button>
+        <button type="submit" class="mc-btn">Publish Post</button>
       </form>
     </section>
 
     <!-- SEARCH BAR -->
     <section class="search-box">
-      <input type="text" id="search-input" class="search-input" placeholder="🔍 Search posts..." />
+      <input type="text" id="search-input" class="search-input" placeholder="Search posts..." />
     </section>
 
     <!-- POSTS FEED -->
@@ -538,7 +573,7 @@
         <button id="close-modal" class="close-modal">&times;</button>
       </div>
       <div id="reports-list">
-        <p style="color: #8899a6; font-size: 0.9rem;">Loading...</p>
+        <p style="color: #888888; font-size: 0.9rem;">Loading...</p>
       </div>
     </div>
   </div>
