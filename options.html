@@ -67,7 +67,6 @@
       margin-top: 18px;
     }
 
-    /* BOTTONI STILE MINECRAFT */
     .mc-btn {
       display: block;
       width: 100%;
@@ -91,12 +90,15 @@
       color: #ffffa0;
     }
 
-    /* GRIGLIA SFONDI */
+    /* GRIGLIA SFONDI AGGIORNATA */
     .bg-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
       margin-bottom: 24px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
     .bg-option {
@@ -177,6 +179,14 @@
         <img src="cave.png" alt="Cave" class="bg-preview">
         <span class="bg-name">Cave</span>
       </div>
+      <div class="bg-option" data-bg="island1.png">
+        <img src="island1.png" alt="Island 1" class="bg-preview">
+        <span class="bg-name">Island 1</span>
+      </div>
+      <div class="bg-option" data-bg="island2.png">
+        <img src="island2.png" alt="Island 2" class="bg-preview">
+        <span class="bg-name">Island 2</span>
+      </div>
     </div>
 
     <!-- TORNA INDIETRO -->
@@ -187,12 +197,10 @@
     const fontBtn = document.getElementById('toggle-font-btn');
     const bgOptions = document.querySelectorAll('.bg-option');
 
-    // Carica impostazioni salvate (o default)
     let currentFont = localStorage.getItem('sf_font') || 'Minecraft';
     let currentBg = localStorage.getItem('sf_bg') || 'titlescreen.png';
 
     function applySettings() {
-      // Applica Font
       if (currentFont === 'Arial') {
         document.documentElement.style.setProperty('--site-font', 'Arial, Helvetica, sans-serif');
         fontBtn.textContent = 'Font: Arial';
@@ -201,10 +209,8 @@
         fontBtn.textContent = 'Font: Minecraft';
       }
 
-      // Applica Sfondo
       document.documentElement.style.setProperty('--site-bg', `url('${currentBg}')`);
 
-      // Aggiorna bordo giallo sull'opzione selezionata
       bgOptions.forEach(opt => {
         if (opt.dataset.bg === currentBg) {
           opt.classList.add('active');
@@ -214,14 +220,12 @@
       });
     }
 
-    // Cambio Font al click
     fontBtn.addEventListener('click', () => {
       currentFont = (currentFont === 'Minecraft') ? 'Arial' : 'Minecraft';
       localStorage.setItem('sf_font', currentFont);
       applySettings();
     });
 
-    // Cambio Sfondo al click
     bgOptions.forEach(opt => {
       opt.addEventListener('click', () => {
         currentBg = opt.dataset.bg;
@@ -230,7 +234,6 @@
       });
     });
 
-    // Inizializza al caricamento pagina
     applySettings();
   </script>
 
