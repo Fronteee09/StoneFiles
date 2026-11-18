@@ -17,6 +17,8 @@
     :root {
       --site-font: 'Minecraft', monospace, sans-serif;
       --site-bg: url('sfondoindex.png');
+      --bg-brightness: 0.65;
+      --bg-blur: 0px;
     }
 
     * {
@@ -28,11 +30,13 @@
     }
 
     body {
-      background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), var(--site-bg);
+      background: linear-gradient(rgba(0, 0, 0, var(--bg-brightness)), rgba(0, 0, 0, var(--bg-brightness))), var(--site-bg);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       background-attachment: fixed;
+      backdrop-filter: blur(var(--bg-blur));
+      -webkit-backdrop-filter: blur(var(--bg-blur));
       color: #e0e0e0;
       min-height: 100vh;
       display: flex;
@@ -69,7 +73,7 @@
       font-size: 0.95rem;
       color: #aaaaaa;
       text-align: left;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       margin-top: 18px;
     }
 
@@ -96,12 +100,51 @@
       color: #ffffa0;
     }
 
+    .slider-container {
+      background-color: #1e1e1e;
+      border: 1px solid #444;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .slider-container label {
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+
+    .slider-container input[type="range"] {
+      width: 100%;
+      accent-color: #5a5a5a;
+      cursor: pointer;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #1e1e1e;
+      border: 1px solid #444;
+      padding: 12px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-container input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
     .bg-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-bottom: 24px;
-      max-height: 280px;
+      margin-bottom: 10px;
+      max-height: 240px;
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -129,13 +172,13 @@
 
     .bg-preview {
       width: 100%;
-      height: 60px;
+      height: 55px;
       object-fit: cover;
       border: 1px solid #111;
     }
 
     .bg-name {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #ffffff;
     }
 
@@ -144,11 +187,11 @@
     }
 
     .done-btn {
-      margin-top: 10px;
+      margin-top: 16px;
     }
   </style>
 
-  <!-- FIREBASE SYNC LOGIC -->
+  <!-- FIREBASE & OPTIONS LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -171,12 +214,18 @@
     const fontBtn = document.getElementById('toggle-font-btn');
     const bgOptions = document.querySelectorAll('.bg-option');
     const syncStatus = document.getElementById('sync-status');
+    const brightnessSlider = document.getElementById('brightness-slider');
+    const brightnessVal = document.getElementById('brightness-val');
+    const blurCheck = document.getElementById('blur-check');
 
     let currentUser = null;
     let currentFont = localStorage.getItem('sf_font') || 'Minecraft';
-    let currentBg = localStorage.getItem('sf_bg') || 'titlescreen.png';
+    let currentBg = localStorage.getItem('sf_bg') || 'sfondoindex.png';
+    let currentBrightness = localStorage.getItem('sf_brightness') || '0.65';
+    let currentBlur = localStorage.getItem('sf_blur') === 'true';
 
     function applyUI() {
+      // Font
       if (currentFont === 'Arial') {
         document.documentElement.style.setProperty('--site-font', 'Arial, Helvetica, sans-serif');
         fontBtn.textContent = 'Font: Arial';
@@ -185,8 +234,20 @@
         fontBtn.textContent = 'Font: Minecraft';
       }
 
+      // Sfondo
       document.documentElement.style.setProperty('--site-bg', `url('${currentBg}')`);
 
+      // Luminosità
+      document.documentElement.style.setProperty('--bg-brightness', currentBrightness);
+      brightnessSlider.value = currentBrightness;
+      brightnessVal.textContent = Math.round((1 - currentBrightness) * 100) + '% Dark overlay';
+
+      // Blur
+      const blurValue = currentBlur ? '6px' : '0px';
+      document.documentElement.style.setProperty('--bg-blur', blurValue);
+      blurCheck.checked = currentBlur;
+
+      // Selezione visiva griglia sfondi
       bgOptions.forEach(opt => {
         if (opt.dataset.bg === currentBg) {
           opt.classList.add('active');
@@ -197,19 +258,21 @@
     }
 
     async function saveSettings() {
-      // Salva in locale per caricamento istantaneo
       localStorage.setItem('sf_font', currentFont);
       localStorage.setItem('sf_bg', currentBg);
+      localStorage.setItem('sf_brightness', currentBrightness);
+      localStorage.setItem('sf_blur', currentBlur);
       applyUI();
 
-      // Se loggato, salva anche sull'account Firebase
       if (currentUser) {
         syncStatus.textContent = "Saving to account...";
         syncStatus.style.color = "#ffff55";
         try {
           await setDoc(doc(db, "userSettings", currentUser.uid), {
             font: currentFont,
-            background: currentBg
+            background: currentBg,
+            brightness: currentBrightness,
+            blur: currentBlur
           }, { merge: true });
           syncStatus.textContent = `Synced with ${currentUser.displayName || "Account"} ✓`;
           syncStatus.style.color = "#55ff55";
@@ -231,8 +294,13 @@
             const data = snap.data();
             if (data.font) currentFont = data.font;
             if (data.background) currentBg = data.background;
+            if (data.brightness !== undefined) currentBrightness = data.brightness;
+            if (data.blur !== undefined) currentBlur = data.blur;
+
             localStorage.setItem('sf_font', currentFont);
             localStorage.setItem('sf_bg', currentBg);
+            localStorage.setItem('sf_brightness', currentBrightness);
+            localStorage.setItem('sf_blur', currentBlur);
             applyUI();
           }
           syncStatus.textContent = `Synced with ${user.displayName || "Account"} ✓`;
@@ -259,6 +327,16 @@
       });
     });
 
+    brightnessSlider.addEventListener('input', (e) => {
+      currentBrightness = e.target.value;
+      saveSettings();
+    });
+
+    blurCheck.addEventListener('change', (e) => {
+      currentBlur = e.target.checked;
+      saveSettings();
+    });
+
     applyUI();
   </script>
 </head>
@@ -268,13 +346,17 @@
     <h1 class="page-title">Options</h1>
     <p id="sync-status" class="sync-status">Checking account...</p>
 
-    <!-- SCELTA FONT -->
+    <!-- FONT -->
     <p class="section-label">Font Style:</p>
     <button id="toggle-font-btn" class="mc-btn">Font: Minecraft</button>
 
-    <!-- SCELTA SFONDO -->
+    <!-- SFONDO -->
     <p class="section-label">Background Panorama:</p>
     <div class="bg-grid" id="bg-grid">
+      <div class="bg-option" data-bg="sfondoindex.png">
+        <img src="sfondoindex.png" alt="Sfondo Index" class="bg-preview">
+        <span class="bg-name">Default (Index)</span>
+      </div>
       <div class="bg-option" data-bg="titlescreen.png">
         <img src="titlescreen.png" alt="Title Screen" class="bg-preview">
         <span class="bg-name">Title Screen</span>
@@ -309,7 +391,21 @@
       </div>
     </div>
 
-    <!-- TORNA INDIETRO -->
+    <!-- LUMINOSITA' -->
+    <p class="section-label">Background Darkening:</p>
+    <div class="slider-container">
+      <label id="brightness-val">Dark overlay</label>
+      <input type="range" id="brightness-slider" min="0.1" max="0.95" step="0.05">
+    </div>
+
+    <!-- BLUR -->
+    <p class="section-label">Background Effects:</p>
+    <label class="checkbox-container">
+      <input type="checkbox" id="blur-check">
+      <span>Enable Blur Effect (Glassmorphism)</span>
+    </label>
+
+    <!-- DONE -->
     <a href="index.html" class="mc-btn done-btn">Done</a>
   </main>
 
