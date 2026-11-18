@@ -317,7 +317,15 @@
     const db = getFirestore(app);
 
     const ADMIN_NICKNAME = "Fronte ★";
-    const ADMIN_UID = "rgXLYIPZcgTYqJWYmz6y4bmZCdJ3";
+    const ADMIN_UIDS = [
+      "rgXLYIPZcgTYqJWYmz6y4bmZCdJ3",
+      "5rJ0ax8MtQW6Ih64ufszdZ9qzoH3"
+    ];
+
+    function checkIsMod(user) {
+      if (!user) return false;
+      return user.displayName === ADMIN_NICKNAME || ADMIN_UIDS.includes(user.uid);
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
       const mailBtn = document.getElementById("mail-btn");
@@ -332,14 +340,10 @@
       let allPosts = [];
 
       onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const nickname = user.displayName || "User";
-          // Controllo permessi tramite Nickname oppure UID specifico
-          if (nickname === ADMIN_NICKNAME || user.uid === ADMIN_UID) {
-            mailBtn.style.display = "block";
-            if (mediaInputGroup) mediaInputGroup.style.display = "block";
-            loadReportsCount();
-          }
+        if (checkIsMod(user)) {
+          mailBtn.style.display = "block";
+          if (mediaInputGroup) mediaInputGroup.style.display = "block";
+          loadReportsCount();
         }
         loadPosts();
       });
@@ -364,7 +368,7 @@
         const mediaInputEl = document.getElementById("post-media-input");
         const mediaUrl = mediaInputEl ? mediaInputEl.value.trim() : "";
         const nickname = user.displayName || "Anonym";
-        const isMod = (nickname === ADMIN_NICKNAME || user.uid === ADMIN_UID);
+        const isMod = checkIsMod(user);
 
         if (!title || !body) return;
 
@@ -411,8 +415,7 @@
           return;
         }
 
-        const currentUser = auth.currentUser;
-        const isUserMod = currentUser && (currentUser.displayName === ADMIN_NICKNAME || currentUser.uid === ADMIN_UID);
+        const isUserMod = checkIsMod(auth.currentUser);
 
         postsToRender.forEach((post) => {
           const card = document.createElement("article");
