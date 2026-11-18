@@ -55,8 +55,14 @@
     .page-title {
       font-size: 1.6rem;
       color: #ffffff;
-      margin-bottom: 24px;
+      margin-bottom: 8px;
       text-shadow: 2px 2px 0px #000000;
+    }
+
+    .sync-status {
+      font-size: 0.8rem;
+      color: #888888;
+      margin-bottom: 18px;
     }
 
     .section-label {
@@ -90,7 +96,6 @@
       color: #ffffa0;
     }
 
-    /* GRIGLIA SFONDI AGGIORNATA */
     .bg-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -142,11 +147,126 @@
       margin-top: 10px;
     }
   </style>
+
+  <!-- FIREBASE SYNC LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDuu5Y88zLYuPWqxHs9pis6OfeNDKoG8YE",
+      authDomain: "stonefiles-c2a40.firebaseapp.com",
+      projectId: "stonefiles-c2a40",
+      storageBucket: "stonefiles-c2a40.firebasestorage.app",
+      messagingSenderId: "855521046414",
+      appId: "1:855521046414:web:2996e4c8f2a6b47a72fedf",
+      measurementId: "G-WEFNP7N7DG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const fontBtn = document.getElementById('toggle-font-btn');
+    const bgOptions = document.querySelectorAll('.bg-option');
+    const syncStatus = document.getElementById('sync-status');
+
+    let currentUser = null;
+    let currentFont = localStorage.getItem('sf_font') || 'Minecraft';
+    let currentBg = localStorage.getItem('sf_bg') || 'titlescreen.png';
+
+    function applyUI() {
+      if (currentFont === 'Arial') {
+        document.documentElement.style.setProperty('--site-font', 'Arial, Helvetica, sans-serif');
+        fontBtn.textContent = 'Font: Arial';
+      } else {
+        document.documentElement.style.setProperty('--site-font', "'Minecraft', monospace, sans-serif");
+        fontBtn.textContent = 'Font: Minecraft';
+      }
+
+      document.documentElement.style.setProperty('--site-bg', `url('${currentBg}')`);
+
+      bgOptions.forEach(opt => {
+        if (opt.dataset.bg === currentBg) {
+          opt.classList.add('active');
+        } else {
+          opt.classList.remove('active');
+        }
+      });
+    }
+
+    async function saveSettings() {
+      // Salva in locale per caricamento istantaneo
+      localStorage.setItem('sf_font', currentFont);
+      localStorage.setItem('sf_bg', currentBg);
+      applyUI();
+
+      // Se loggato, salva anche sull'account Firebase
+      if (currentUser) {
+        syncStatus.textContent = "Saving to account...";
+        syncStatus.style.color = "#ffff55";
+        try {
+          await setDoc(doc(db, "userSettings", currentUser.uid), {
+            font: currentFont,
+            background: currentBg
+          }, { merge: true });
+          syncStatus.textContent = `Synced with ${currentUser.displayName || "Account"} ✓`;
+          syncStatus.style.color = "#55ff55";
+        } catch (err) {
+          console.error("Error saving settings:", err);
+          syncStatus.textContent = "Saved locally (Sync error)";
+          syncStatus.style.color = "#ff5555";
+        }
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        syncStatus.textContent = `Loading settings for ${user.displayName || "Account"}...`;
+        try {
+          const snap = await getDoc(doc(db, "userSettings", user.uid));
+          if (snap.exists()) {
+            const data = snap.data();
+            if (data.font) currentFont = data.font;
+            if (data.background) currentBg = data.background;
+            localStorage.setItem('sf_font', currentFont);
+            localStorage.setItem('sf_bg', currentBg);
+            applyUI();
+          }
+          syncStatus.textContent = `Synced with ${user.displayName || "Account"} ✓`;
+          syncStatus.style.color = "#55ff55";
+        } catch (e) {
+          syncStatus.textContent = "Local mode";
+        }
+      } else {
+        currentUser = null;
+        syncStatus.textContent = "Not logged in (Saved on this device only)";
+        syncStatus.style.color = "#aaaaaa";
+      }
+    });
+
+    fontBtn.addEventListener('click', () => {
+      currentFont = (currentFont === 'Minecraft') ? 'Arial' : 'Minecraft';
+      saveSettings();
+    });
+
+    bgOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        currentBg = opt.dataset.bg;
+        saveSettings();
+      });
+    });
+
+    applyUI();
+  </script>
 </head>
 <body>
 
   <main class="options-container">
     <h1 class="page-title">Options</h1>
+    <p id="sync-status" class="sync-status">Checking account...</p>
 
     <!-- SCELTA FONT -->
     <p class="section-label">Font Style:</p>
@@ -192,50 +312,6 @@
     <!-- TORNA INDIETRO -->
     <a href="index.html" class="mc-btn done-btn">Done</a>
   </main>
-
-  <script>
-    const fontBtn = document.getElementById('toggle-font-btn');
-    const bgOptions = document.querySelectorAll('.bg-option');
-
-    let currentFont = localStorage.getItem('sf_font') || 'Minecraft';
-    let currentBg = localStorage.getItem('sf_bg') || 'titlescreen.png';
-
-    function applySettings() {
-      if (currentFont === 'Arial') {
-        document.documentElement.style.setProperty('--site-font', 'Arial, Helvetica, sans-serif');
-        fontBtn.textContent = 'Font: Arial';
-      } else {
-        document.documentElement.style.setProperty('--site-font', "'Minecraft', monospace, sans-serif");
-        fontBtn.textContent = 'Font: Minecraft';
-      }
-
-      document.documentElement.style.setProperty('--site-bg', `url('${currentBg}')`);
-
-      bgOptions.forEach(opt => {
-        if (opt.dataset.bg === currentBg) {
-          opt.classList.add('active');
-        } else {
-          opt.classList.remove('active');
-        }
-      });
-    }
-
-    fontBtn.addEventListener('click', () => {
-      currentFont = (currentFont === 'Minecraft') ? 'Arial' : 'Minecraft';
-      localStorage.setItem('sf_font', currentFont);
-      applySettings();
-    });
-
-    bgOptions.forEach(opt => {
-      opt.addEventListener('click', () => {
-        currentBg = opt.dataset.bg;
-        localStorage.setItem('sf_bg', currentBg);
-        applySettings();
-      });
-    });
-
-    applySettings();
-  </script>
 
 </body>
 </html>
