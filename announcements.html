@@ -13,6 +13,15 @@
     @font-face {
       font-family: 'Minecraft';
       src: url('Minecraft.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'MineCrafter';
+      src: url('Minecrafter.Alt.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
     }
 
     * {
@@ -60,6 +69,7 @@
     }
 
     .header-box h1 {
+      font-family: 'MineCrafter', 'Minecraft', sans-serif !important;
       font-size: 1.9rem;
       color: #ffffff;
       margin-bottom: 8px;
@@ -206,6 +216,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const ADMIN_NICKNAME = "Fronte ★";
     const ADMIN_UIDS = [
       "rgXLYIPZcgTYqJWYmz6y4bmZCdJ3",
       "5rJ0ax8MtQW6Ih64ufszdZ9qzoH3"
@@ -213,7 +224,7 @@
 
     function checkIsMod(user) {
       if (!user) return false;
-      return ADMIN_UIDS.includes(user.uid);
+      return user.displayName === ADMIN_NICKNAME || ADMIN_UIDS.includes(user.uid);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -265,7 +276,7 @@
         announcementsFeed.innerHTML = "<p style='color: #888888; text-align:center;'>Loading announcements...</p>";
         try {
           const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
-          const querySnapshot =- await getDocs(q);
+          const querySnapshot = await getDocs(q);
           
           announcementsFeed.innerHTML = "";
           if (querySnapshot.empty) {
@@ -337,7 +348,7 @@
       <a href="index.html" class="mc-btn btn-gold">← Main Menu</a>
     </header>
 
-    <!-- ANNOUNCEMENT CREATOR (Solo per i mod UID) -->
+    <!-- ANNOUNCEMENT CREATOR (Solo per mod/admin) -->
     <section id="creator-box" class="creator-box" style="display: none;">
       <form id="announcement-form">
         <input type="text" id="ann-title-input" class="form-input" placeholder="Announcement title..." required />
