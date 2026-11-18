@@ -5,154 +5,154 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StoneFiles — Account</title>
   <link rel="icon" type="image/png" href="stonefilelogo.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#18202d">
   <script type="module" src="theme.js"></script>
+
   <style>
-    /* RESET BASE */
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('Minecraft.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'MineCrafter';
+      src: url('Minecrafter.Alt.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      border-radius: 0px !important; /* Visuale squadrata retro */
+      border-radius: 0px !important;
+      font-family: 'Minecraft', monospace, sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('sfondoindex.png');
+      background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('sfondoindex.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       background-attachment: fixed;
       color: #e0e0e0;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 20px 16px;
     }
 
-    /* BARRA IN ALTO */
-    .top-bar {
-      max-width: 450px;
-      margin: 0 auto 16px auto;
-      display: flex;
-      justify-content: flex-start;
+    .account-container {
+      background-color: rgba(24, 24, 24, 0.94);
+      border-top: 2px solid #5a5a5a;
+      border-left: 2px solid #5a5a5a;
+      border-right: 2px solid #1e1e1e;
+      border-bottom: 2px solid #1e1e1e;
+      max-width: 480px;
+      width: 100%;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     }
 
-    .btn-back {
-      background-color: #1e1e1e;
-      color: #ffffff;
-      border: 1px solid #444444;
-      padding: 6px 16px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      font-weight: bold;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-back:hover {
-      background-color: #2e2e2e;
-    }
-
-    /* CONTENITORE PRINCIPALE */
-    .main-container {
-      max-width: 450px;
-      margin: 0 auto;
-    }
-
-    /* BOX ACCOUNT */
-    .account-box {
-      background-color: rgba(30, 30, 30, 0.95);
-      border: 1px solid #333333;
-      padding: 30px 24px;
-    }
-
-    .account-box h1 {
-      font-size: 1.5rem;
+    .page-title {
+      font-family: 'MineCrafter', 'Minecraft', sans-serif !important;
+      font-size: 1.8rem;
       color: #ffffff;
       margin-bottom: 8px;
-      text-transform: uppercase;
-      text-align: center;
+      text-shadow: 3px 3px 0px #000000;
     }
 
-    .account-box p {
+    .page-subtitle {
       font-size: 0.85rem;
       color: #aaaaaa;
-      margin-bottom: 20px;
-      text-align: center;
+      margin-bottom: 24px;
     }
 
-    /* FORM STILE */
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 14px;
+      text-align: left;
     }
 
     .form-group label {
       display: block;
       font-size: 0.8rem;
       color: #cccccc;
-      margin-bottom: 5px;
-      text-transform: uppercase;
+      margin-bottom: 4px;
     }
 
-    .form-group input {
+    .form-input {
       width: 100%;
-      background-color: #181818;
-      border: 1px solid #444444;
+      background-color: #121212;
+      border: 2px solid #444444;
       color: #ffffff;
-      padding: 10px;
-      font-size: 0.9rem;
+      padding: 12px;
+      font-size: 0.95rem;
     }
 
-    .form-group input:focus {
+    .form-input:focus {
       outline: none;
-      border-color: #777777;
+      border-color: #888888;
+      background-color: #181818;
     }
 
-    .btn-submit {
+    .mc-btn {
+      display: block;
       width: 100%;
-      background-color: #3a3a3a;
+      background-color: #363636;
       color: #ffffff;
-      border: 1px solid #555555;
-      padding: 10px;
-      font-size: 0.9rem;
-      font-weight: bold;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      border-top: 2px solid #5a5a5a;
+      border-left: 2px solid #5a5a5a;
+      border-right: 2px solid #1e1e1e;
+      border-bottom: 2px solid #1e1e1e;
+      text-shadow: 2px 2px 0px #1a1a1a;
       cursor: pointer;
-      margin-top: 5px;
-      transition: background 0.2s;
+      margin-top: 12px;
     }
 
-    .btn-submit:hover {
-      background-color: #4a4a4a;
+    .mc-btn:hover {
+      background-color: #4a5a75;
+      border-top-color: #7c92b8;
+      border-left-color: #7c92b8;
+      color: #ffffa0;
     }
 
-    /* TOGGLE TRA LOGIN E SIGN UP */
-    .toggle-text {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 0.85rem;
-      color: #aaaaaa;
+    .btn-danger {
+      background-color: #4a1a1a;
+      border-top-color: #7a2a2a;
+      border-left-color: #7a2a2a;
+      border-right-color: #2a0a0a;
+      border-bottom-color: #2a0a0a;
+      color: #ff6666;
     }
 
-    .toggle-text button {
-      background: none;
-      border: none;
+    .btn-danger:hover {
+      background-color: #6a2222;
       color: #ffffff;
-      cursor: pointer;
-      text-decoration: underline;
-      font-weight: bold;
-      font-size: 0.85rem;
     }
 
-    #status-message {
-      margin-top: 15px;
+    .status-msg {
       font-size: 0.85rem;
-      text-align: center;
-      font-weight: bold;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    #user-panel, #auth-panel {
+      display: none;
     }
   </style>
 
-  <!-- FIREBASE MODULES -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDuu5Y88zLYuPWqxHs9pis6OfeNDKoG8YE",
@@ -164,89 +164,83 @@
       measurementId: "G-WEFNP7N7DG"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    let isLoginMode = true;
-
     document.addEventListener("DOMContentLoaded", () => {
+      const authPanel = document.getElementById("auth-panel");
+      const userPanel = document.getElementById("user-panel");
+      const authForm = document.getElementById("auth-form");
       const formTitle = document.getElementById("form-title");
-      const formSubtitle = document.getElementById("form-subtitle");
       const submitBtn = document.getElementById("submit-btn");
-      const toggleBtn = document.getElementById("toggle-btn");
-      const toggleLabel = document.getElementById("toggle-label");
-      const statusMsg = document.getElementById("status-message");
+      const toggleMode = document.getElementById("toggle-mode");
+      const nicknameGroup = document.getElementById("nickname-group");
+      const statusMsg = document.getElementById("status-msg");
+      
+      const userEmailDisplay = document.getElementById("user-email-display");
+      const userNicknameDisplay = document.getElementById("user-nickname-display");
+      const logoutBtn = document.getElementById("logout-btn");
 
-      toggleBtn.addEventListener("click", () => {
-        isLoginMode = !isLoginMode;
-        statusMsg.textContent = "";
-        
-        if (isLoginMode) {
-          formTitle.textContent = "Log-in";
-          formSubtitle.textContent = "Insert nickaname and password";
-          submitBtn.textContent = "Enter";
-          toggleLabel.textContent = "Do you have an account?";
-          toggleBtn.textContent = "Sign-up";
+      let isSignUp = false;
+
+      toggleMode.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        if (isSignUp) {
+          formTitle.textContent = "Register Account";
+          submitBtn.textContent = "Sign Up";
+          toggleMode.textContent = "Already have an account? Log in";
+          nicknameGroup.style.display = "block";
         } else {
-          formTitle.textContent = "Sign up";
-          formSubtitle.textContent = "Crea your profile!";
-          submitBtn.textContent = "Create an Account";
-          toggleLabel.textContent = "Do you have an account?";
-          toggleBtn.textContent = "Log-in";
+          formTitle.textContent = "Account Login";
+          submitBtn.textContent = "Log In";
+          toggleMode.textContent = "Need an account? Register";
+          nicknameGroup.style.display = "none";
         }
       });
 
-      document.getElementById("auth-form").addEventListener("submit", async (e) => {
+      authForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        statusMsg.style.color = "#aaaaaa";
-        statusMsg.textContent = "Caricamento in corso...";
+        const email = document.getElementById("email-input").value.trim();
+        const password = document.getElementById("password-input").value.trim();
+        const nickname = document.getElementById("nickname-input").value.trim();
 
-        const rawNickname = document.getElementById("nickname").value.trim();
-        const password = document.getElementById("password").value;
-
-        if (!rawNickname) {
-          statusMsg.style.color = "#ff6b6b";
-          statusMsg.textContent = "Inserisci un Nickname.";
-          return;
-        }
-
-        if (password.length < 6) {
-          statusMsg.style.color = "#ff6b6b";
-          statusMsg.textContent = "La password deve contenere almeno 6 caratteri.";
-          return;
-        }
-
-        // Converte il nickname pulito per la mail interna di Firebase
-        const formattedEmail = `${rawNickname.toLowerCase().replace(/[^a-z0-9]/g, "")}@stonefiles.local`;
+        statusMsg.style.color = "#ffff55";
+        statusMsg.textContent = "Processing...";
 
         try {
-          if (isLoginMode) {
-            // ACCEDI
-            await signInWithEmailAndPassword(auth, formattedEmail, password);
-            statusMsg.style.color = "#51cf66";
-            statusMsg.textContent = "Accesso effettuato! Ritorno alla home...";
-            setTimeout(() => window.location.href = "index.html", 1200);
+          if (isSignUp) {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            if (nickname) {
+              await updateProfile(userCredential.user, { displayName: nickname });
+            }
+            statusMsg.style.color = "#55ff55";
+            statusMsg.textContent = "Registration successful!";
           } else {
-            // REGISTRATI
-            const userCredential = await createUserWithEmailAndPassword(auth, formattedEmail, password);
-            await updateProfile(userCredential.user, { displayName: rawNickname });
-            statusMsg.style.color = "#51cf66";
-            statusMsg.textContent = "Account creato con successo! Ritorno alla home...";
-            setTimeout(() => window.location.href = "index.html", 1200);
+            await signInWithEmailAndPassword(auth, email, password);
+            statusMsg.style.color = "#55ff55";
+            statusMsg.textContent = "Logged in successfully!";
           }
         } catch (error) {
-          console.error("Firebase Auth Error:", error.code, error.message);
-          statusMsg.style.color = "#ff6b6b";
+          statusMsg.style.color = "#ff5555";
+          statusMsg.textContent = error.message;
+        }
+      });
 
-          if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" || error.code === "auth/user-not-found") {
-            statusMsg.textContent = "Nickname o Password errati.";
-          } else if (error.code === "auth/email-already-in-use") {
-            statusMsg.textContent = "Questo Nickname è già stato preso.";
-          } else if (error.code === "auth/operation-not-allowed") {
-            statusMsg.textContent = "Attiva 'Email/Password' nella console di Firebase!";
-          } else {
-            statusMsg.textContent = "Errore: " + error.message;
-          }
+      logoutBtn.addEventListener("click", async () => {
+        await signOut(auth);
+        statusMsg.textContent = "Logged out.";
+      });
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          authPanel.style.display = "none";
+          userPanel.style.display = "block";
+          userEmailDisplay.textContent = user.email || "No email";
+          userNicknameDisplay.textContent = user.displayName || "Not set";
+        } else {
+          authPanel.style.display = "block";
+          userPanel.style.display = "none";
         }
       });
     });
@@ -254,37 +248,47 @@
 </head>
 <body>
 
-  <div class="top-bar">
-    <a href="index.html" class="btn-back">← Home</a>
-  </div>
+  <main class="account-container">
+    <h1 class="page-title">Account</h1>
+    <p class="page-subtitle">Manage your credentials and sync settings.</p>
 
-  <div class="main-container">
-    <main class="account-box">
-      <h1 id="form-title">Log-in</h1>
-      <p id="form-subtitle">Inserisci Nickname and Password to join</p>
-      
+    <!-- AUTH PANEL (Login / Register) -->
+    <div id="auth-panel">
+      <h3 id="form-title" style="color: #fff; margin-bottom: 14px; font-size: 1.1rem;">Account Login</h3>
       <form id="auth-form">
         <div class="form-group">
-          <label for="nickname">Nickname</label>
-          <input type="text" id="nickname" placeholder="es. Herobrine" required />
+          <label>Email Address</label>
+          <input type="email" id="email-input" class="form-input" required />
         </div>
-
         <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="••••••••" required />
+          <label>Password</label>
+          <input type="password" id="password-input" class="form-input" required />
         </div>
-
-        <button type="submit" id="submit-btn" class="btn-submit">Enter</button>
+        <div class="form-group" id="nickname-group" style="display: none;">
+          <label>Nickname</label>
+          <input type="text" id="nickname-input" class="form-input" placeholder="Your display name" />
+        </div>
+        <button type="submit" id="submit-btn" class="mc-btn">Log In</button>
       </form>
+      <p style="margin-top: 14px;">
+        <a href="#" id="toggle-mode" style="color: #ffaa00; font-size: 0.85rem; text-decoration: none;">Need an account? Register</a>
+      </p>
+    </div>
 
-      <div class="toggle-text">
-        <span id="toggle-label">Do you have an account?</span>
-        <button type="button" id="toggle-btn">Sign-up</button>
-      </div>
+    <!-- USER PANEL (Logged In) -->
+    <div id="user-panel">
+      <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 8px;">Logged in as:</p>
+      <p id="user-email-display" style="color: #ffaa00; font-weight: bold; margin-bottom: 12px;"></p>
+      <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 4px;">Nickname:</p>
+      <p id="user-nickname-display" style="color: #fff; font-weight: bold; margin-bottom: 20px;"></p>
+      
+      <button id="logout-btn" class="mc-btn btn-danger">Log Out</button>
+    </div>
 
-      <div id="status-message"></div>
-    </main>
-  </div>
+    <p id="status-msg" class="status-msg"></p>
+
+    <a href="index.html" class="mc-btn" style="margin-top: 20px;">← Main Menu</a>
+  </main>
 
 </body>
 </html>
