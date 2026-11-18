@@ -13,9 +13,17 @@
     @font-face {
       font-family: 'Minecraft';
       src: url('Minecraft.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
     }
 
-    /* STILE SQUADRATO MINECRAFT-STYLE */
+    @font-face {
+      font-family: 'MineCrafter';
+      src: url('Minecrafter.Alt.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -44,7 +52,6 @@
       width: 100%;
     }
 
-    /* TUTTI I BOX CONDIVIDONO LA STESSA LARGHEZZA E BORDI SQUADRATI */
     .header-box, .creator-box, .search-box, .post-card {
       background-color: rgba(24, 24, 24, 0.94);
       border-top: 2px solid #5a5a5a;
@@ -86,6 +93,7 @@
     }
 
     .header-box h1 {
+      font-family: 'MineCrafter', 'Minecraft', sans-serif !important;
       font-size: 1.9rem;
       color: #ffffff;
       margin-bottom: 8px;
@@ -99,7 +107,6 @@
       margin-bottom: 18px;
     }
 
-    /* BOTTONI IN STILE MENU MINECRAFT */
     .mc-btn {
       background-color: #363636;
       color: #ffffff;
@@ -536,7 +543,7 @@
 </head>
 <body>
 
-  <div class="main-container">
+  <main class="main-container">
 
     <!-- HEADER -->
     <header class="header-box">
@@ -570,7 +577,7 @@
       <!-- Dynamic posts will load here -->
     </div>
 
-  </div>
+  </main>
 
   <!-- ADMIN MODAL -->
   <div id="admin-modal">
