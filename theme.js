@@ -16,7 +16,7 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-function applyTheme(font, bg) {
+function applyTheme(font, bg, darkness, blur) {
   let style = document.getElementById('sf-custom-theme-style');
   if (!style) {
     style = document.createElement('style');
@@ -25,14 +25,8 @@ function applyTheme(font, bg) {
   }
 
   let cssRules = `
-    @font-face {
-      font-family: 'Minecraft';
-      src: url('Minecraft.ttf') format('truetype');
-    }
-    @font-face {
-      font-family: 'MineCrafter';
-      src: url('MineCrafter.ttf') format('truetype');
-    }
+    @font-face { font-family: 'Minecraft'; src: url('Minecraft.ttf') format('truetype'); }
+    @font-face { font-family: 'MineCrafter'; src: url('MineCrafter.ttf') format('truetype'); }
   `;
 
   if (font === 'Arial') {
@@ -47,27 +41,44 @@ function applyTheme(font, bg) {
     `;
   }
 
-  if (bg) {
-    cssRules += `
-      body {
-        background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('${bg}') !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        background-attachment: fixed !important;
-      }
-    `;
-  }
+  const bgImg = bg || 'sfondoindex.png';
+  const darkVal = darkness !== undefined && darkness !== null ? darkness : '0.65';
+  const isBlurred = (blur === true || blur === 'true');
+  const blurPx = isBlurred ? '6px' : '0px';
+  const scaleVal = isBlurred ? 'scale(1.04)' : 'scale(1)';
+
+  cssRules += `
+    body {
+      background: transparent !important;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: linear-gradient(rgba(0, 0, 0, ${darkVal}), rgba(0, 0, 0, ${darkVal})), url('${bgImg}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(${blurPx});
+      transform: ${scaleVal};
+      pointer-events: none;
+    }
+  `;
 
   style.innerHTML = cssRules;
 }
 
-// Applica subito dai dati salvati nel browser
+// 1. Caricamento immediato da localStorage
 const cachedFont = localStorage.getItem('sf_font') || 'Minecraft';
-const cachedBg = localStorage.getItem('sf_bg');
-applyTheme(cachedFont, cachedBg);
+const cachedBg = localStorage.getItem('sf_bg') || 'sfondoindex.png';
+const cachedDarkness = localStorage.getItem('sf_brightness') || '0.65';
+const cachedBlur = localStorage.getItem('sf_blur') === 'true';
 
-// Sincronizza con l'account Firebase
+applyTheme(cachedFont, cachedBg, cachedDarkness, cachedBlur);
+
+// 2. Sincronizzazione con account Firebase
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
@@ -76,14 +87,18 @@ onAuthStateChanged(auth, async (user) => {
         const data = snap.data();
         const font = data.font || cachedFont;
         const bg = data.background || cachedBg;
-        
-        if (data.font) localStorage.setItem('sf_font', data.font);
-        if (data.background) localStorage.setItem('sf_bg', data.background);
-        
-        applyTheme(font, bg);
+        const darkness = data.brightness !== undefined ? data.brightness : cachedDarkness;
+        const blur = data.blur !== undefined ? data.blur : cachedBlur;
+
+        localStorage.setItem('sf_font', font);
+        localStorage.setItem('sf_bg', bg);
+        localStorage.setItem('sf_brightness', darkness);
+        localStorage.setItem('sf_blur', String(blur));
+
+        applyTheme(font, bg, darkness, blur);
       }
     } catch (e) {
-      console.error("Errore sincronizzazione tema:", e);
+      console.error("Theme sync error:", e);
     }
   }
 });
